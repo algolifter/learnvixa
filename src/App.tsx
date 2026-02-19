@@ -8,7 +8,11 @@ import SubjectPage from "./pages/SubjectPage";
 import ChapterPage from "./pages/ChapterPage";
 import ContentPage from "./pages/ContentPage";
 import CalmMode from "./pages/CalmMode";
+import PomodoroPage from "./pages/PomodoroPage";
+import QuickRevisionPage from "./pages/QuickRevisionPage";
+import BoardPredictorPage from "./pages/BoardPredictorPage";
 import NotFound from "./pages/NotFound";
+import ThemeToggle from "./components/ThemeToggle";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +21,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <ThemeToggle />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -24,6 +29,9 @@ const App = () => (
           <Route path="/subject/:subjectId/chapter/:chapterId" element={<ChapterPage />} />
           <Route path="/subject/:subjectId/chapter/:chapterId/:section" element={<ContentPage />} />
           <Route path="/calm" element={<CalmMode />} />
+          <Route path="/pomodoro" element={<PomodoroPage />} />
+          <Route path="/revision" element={<QuickRevisionPage />} />
+          <Route path="/predictor" element={<BoardPredictorPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
