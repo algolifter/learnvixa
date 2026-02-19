@@ -5,7 +5,7 @@ import { subjects, motivationalQuotes } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
 import { BookOpen, Clock, Flame, Target, Sparkles, Wind, Zap, TrendingUp } from "lucide-react";
 
-const EXAM_DATE = new Date("2026-03-02");
+const EXAM_DATE = new Date("2027-03-02");
 
 function getDaysRemaining() {
   const now = new Date();
@@ -87,13 +87,13 @@ export default function Dashboard() {
         <motion.button variants={item} onClick={() => navigate("/calm")} className="glass-hover rounded-full px-5 py-2.5 flex items-center gap-2 text-sm">
           <Wind className="w-4 h-4 text-accent" /> Calm Mode
         </motion.button>
-        <motion.button variants={item} className="glass-hover rounded-full px-5 py-2.5 flex items-center gap-2 text-sm">
+        <motion.button variants={item} onClick={() => navigate("/revision")} className="glass-hover rounded-full px-5 py-2.5 flex items-center gap-2 text-sm">
           <BookOpen className="w-4 h-4 text-primary" /> Quick Revision
         </motion.button>
-        <motion.button variants={item} className="glass-hover rounded-full px-5 py-2.5 flex items-center gap-2 text-sm">
+        <motion.button variants={item} onClick={() => navigate("/pomodoro")} className="glass-hover rounded-full px-5 py-2.5 flex items-center gap-2 text-sm">
           <Zap className="w-4 h-4 text-warning" /> Pomodoro Timer
         </motion.button>
-        <motion.button variants={item} className="glass-hover rounded-full px-5 py-2.5 flex items-center gap-2 text-sm">
+        <motion.button variants={item} onClick={() => navigate("/predictor")} className="glass-hover rounded-full px-5 py-2.5 flex items-center gap-2 text-sm">
           <Sparkles className="w-4 h-4 text-destructive" /> Board Predictor
         </motion.button>
       </motion.div>
