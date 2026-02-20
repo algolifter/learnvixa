@@ -4,6 +4,7 @@ import { getSubject, getChapter } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
 import { ArrowLeft, CheckCircle2, Sparkles, AlertTriangle, Lightbulb, BookOpen, FileText } from "lucide-react";
 import AITeacherPanel from "@/components/AITeacherPanel";
+import TopicHub from "@/components/TopicHub";
 
 // Rich content generator based on chapter context
 function getTopicsContent(subjectId: string, chapterName: string) {
@@ -241,39 +242,9 @@ export default function ContentPage() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-6">
 
-        {/* ========== TOPICS ========== */}
+        {/* ========== TOPICS (Tabbed Hub) ========== */}
         {section === "topics" && (
-          <>
-            <ContentBlock title="Introduction" icon={<BookOpen className="w-5 h-5 text-primary" />}>
-              <p>{topics.introduction}</p>
-            </ContentBlock>
-            <ContentBlock title="Key Concepts & Detailed Explanation" icon={<Lightbulb className="w-5 h-5 text-warning" />}>
-              <ul className="list-disc list-inside space-y-3 text-muted-foreground">
-                {topics.concepts.map((c, i) => <li key={i} dangerouslySetInnerHTML={{ __html: c.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />)}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="⭐ Important Points for Board Exam" icon={<AlertTriangle className="w-5 h-5 text-destructive" />}>
-              <ul className="space-y-2">
-                {topics.importantPoints.map((p, i) => (
-                  <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-primary font-bold shrink-0">✦</span> {p}</li>
-                ))}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="⚠️ Common Mistakes Students Make" icon={<AlertTriangle className="w-5 h-5 text-warning" />}>
-              <ul className="space-y-2">
-                {topics.commonMistakes.map((m, i) => (
-                  <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-destructive font-bold shrink-0">✗</span> {m}</li>
-                ))}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="📝 Exam Strategy Tips" icon={<Sparkles className="w-5 h-5 text-accent" />}>
-              <ul className="space-y-2">
-                {topics.examTips.map((t, i) => (
-                  <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-accent font-bold shrink-0">→</span> {t}</li>
-                ))}
-              </ul>
-            </ContentBlock>
-          </>
+          <TopicHub subjectId={subjectId!} chapterName={chapter.name} />
         )}
 
         {/* ========== NOTES ========== */}
