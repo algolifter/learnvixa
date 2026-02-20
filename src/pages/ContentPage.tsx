@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { getSubject, getChapter } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
 import { ArrowLeft, CheckCircle2, Sparkles, AlertTriangle, Lightbulb, BookOpen, FileText } from "lucide-react";
+import AITeacherPanel from "@/components/AITeacherPanel";
 
 // Rich content generator based on chapter context
 function getTopicsContent(subjectId: string, chapterName: string) {
@@ -381,6 +382,13 @@ export default function ContentPage() {
             </ContentBlock>
           </>
         )}
+
+        {/* AI Teacher */}
+        <AITeacherPanel
+          subject={subject.name}
+          chapter={chapter.name}
+          section={sectionLabels[section] || section}
+        />
 
         {/* Mark as Complete */}
         <motion.button
