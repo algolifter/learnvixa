@@ -13,6 +13,7 @@ import QuickRevisionPage from "./pages/QuickRevisionPage";
 import BoardPredictorPage from "./pages/BoardPredictorPage";
 import NotFound from "./pages/NotFound";
 import ThemeToggle from "./components/ThemeToggle";
+import AIChatbot from "./components/AIChatbot";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <ThemeToggle />
+      <AIChatbot />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
