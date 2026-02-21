@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Loader2 } from "lucide-react";
+import { Sparkles, X, Loader2, Volume2, VolumeX, Square } from "lucide-react";
 import { streamAI } from "@/lib/ai-stream";
 import ReactMarkdown from "react-markdown";
 
@@ -14,18 +14,23 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const [audioLoading, setAudioLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const contentRef = useRef("");
 
   const explain = async () => {
     if (loading) return;
+    stopAudio();
     setOpen(true);
     setContent("");
+    contentRef.current = "";
     setLoading(true);
 
     const controller = new AbortController();
     abortRef.current = controller;
 
-    let soFar = "";
     await streamAI({
       messages: [
         {
@@ -37,21 +42,83 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
       subject,
       chapter,
       onDelta: (chunk) => {
-        soFar += chunk;
-        setContent(soFar);
+        contentRef.current += chunk;
+        setContent(contentRef.current);
       },
       onDone: () => setLoading(false),
       onError: (err) => {
-        soFar += `\n\n⚠️ ${err}`;
-        setContent(soFar);
+        contentRef.current += `\n\n⚠️ ${err}`;
+        setContent(contentRef.current);
         setLoading(false);
       },
       signal: controller.signal,
     });
   };
 
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      URL.revokeObjectURL(audioRef.current.src);
+      audioRef.current = null;
+    }
+    setSpeaking(false);
+    setAudioLoading(false);
+  }, []);
+
+  const playVoice = useCallback(async () => {
+    if (speaking) {
+      stopAudio();
+      return;
+    }
+
+    const textToSpeak = contentRef.current;
+    if (!textToSpeak.trim()) return;
+
+    setAudioLoading(true);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ text: textToSpeak }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Voice generation failed");
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      audio.onended = () => {
+        setSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+      audio.onerror = () => {
+        setSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+
+      await audio.play();
+      setSpeaking(true);
+    } catch (err) {
+      console.error("TTS error:", err);
+    } finally {
+      setAudioLoading(false);
+    }
+  }, [speaking, stopAudio]);
+
   const close = () => {
     abortRef.current?.abort();
+    stopAudio();
     setOpen(false);
     setLoading(false);
   };
@@ -86,10 +153,57 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
                   <Sparkles className="w-5 h-5 text-primary" />
                   <h2 className="font-display text-sm font-bold text-foreground">AI Teacher · {chapter}</h2>
                 </div>
-                <button onClick={close} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Voice button */}
+                  {content && !loading && (
+                    <motion.button
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      onClick={playVoice}
+                      disabled={audioLoading}
+                      className={`p-2 rounded-lg transition-colors ${
+                        speaking
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                      title={speaking ? "Stop voice" : "Listen to explanation"}
+                    >
+                      {audioLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : speaking ? (
+                        <Square className="w-4 h-4" />
+                      ) : (
+                        <Volume2 className="w-4 h-4" />
+                      )}
+                    </motion.button>
+                  )}
+                  <button onClick={close} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
+
+              {/* Speaking indicator */}
+              {speaking && (
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: "auto" }}
+                  className="bg-primary/10 px-5 py-2 flex items-center gap-2 text-xs text-primary border-b border-primary/20"
+                >
+                  <div className="flex gap-0.5">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <motion.div
+                        key={i}
+                        className="w-0.5 bg-primary rounded-full"
+                        animate={{ height: [4, 12, 4] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
+                      />
+                    ))}
+                  </div>
+                  AI Teacher is speaking...
+                  <button onClick={stopAudio} className="ml-auto text-primary hover:underline">Stop</button>
+                </motion.div>
+              )}
 
               <div className="p-5 max-h-[70vh] overflow-y-auto">
                 {loading && !content && (
