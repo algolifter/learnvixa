@@ -5,86 +5,12 @@ import { useStudyProgress } from "@/hooks/useStudyProgress";
 import { ArrowLeft, CheckCircle2, Sparkles, AlertTriangle, Lightbulb, BookOpen, FileText } from "lucide-react";
 import AITeacherPanel from "@/components/AITeacherPanel";
 import TopicHub from "@/components/TopicHub";
+import AIExplainer from "@/components/AIExplainer";
 
-// Rich content generator based on chapter context
+// Rich content generator based on chapter context (used for questions & revision)
 function getTopicsContent(subjectId: string, chapterName: string) {
   return {
-    introduction: `This chapter covers the fundamental concepts, definitions, and applications of **${chapterName}** as prescribed by the CBSE Class 12 syllabus. Each topic is explained in detail with examples, diagrams, and exam-oriented insights. Understanding this chapter deeply is crucial for scoring full marks in board exams, as questions from this chapter frequently appear in 2-mark, 3-mark, and 5-mark sections.`,
-    concepts: [
-      `**Core Definitions**: All fundamental terms and their precise meanings as used in CBSE board exams. Every definition uses board-exam keywords for maximum marks.`,
-      `**Theorems & Proofs**: Complete step-by-step derivations with proper mathematical notation. Each step is justified with reasoning that examiners expect.`,
-      `**Solved Examples**: NCERT solved examples along with additional practice problems. Each example shows the ideal answer format for full marks.`,
-      `**Graphical Representations**: Labeled diagrams showing relationships between variables. Graphs include axis labels, units, and key points marked.`,
-      `**Real-World Applications**: How ${chapterName} connects to daily life and technology. These applications are commonly asked in HOTS questions.`,
-      `**Inter-Chapter Connections**: How this chapter relates to other chapters in the syllabus. Understanding these links helps in revision and comprehensive answers.`,
-      `**NCERT Back Exercise Solutions**: Complete solutions to all NCERT textbook exercises with step-by-step working.`,
-      `**Exemplar Problem Solutions**: Solutions to NCERT Exemplar problems for advanced understanding.`,
-    ],
-    importantPoints: [
-      `Focus on understanding derivations, not just memorizing them — examiners can spot rote learning.`,
-      `Always mention units in final answers (1 mark can be deducted for missing units).`,
-      `Draw neat, labeled diagrams wherever applicable — they can fetch up to 1 extra mark.`,
-      `Use proper mathematical notation and standard symbols throughout your answer.`,
-      `Highlight key terms and formulas by underlining them in your answer sheet.`,
-      `For numerical problems, always write "Given", "To Find", "Formula", "Solution", and "Answer" sections.`,
-      `Practice at least 5 numericals daily from this chapter for speed and accuracy.`,
-    ],
-    commonMistakes: [
-      `Forgetting to mention units in final answers — costs 0.5 to 1 mark each time.`,
-      `Skipping intermediate steps in derivations — examiners need to see your reasoning.`,
-      `Not labeling diagrams properly — unlabeled diagrams get zero marks.`,
-      `Confusing similar formulas from different chapters — make a comparison chart.`,
-      `Writing answers in paragraph form instead of points — reduces readability and marks.`,
-      `Not reading the question carefully — answering what wasn't asked wastes time.`,
-      `Rushing through calculations without double-checking — arithmetic errors are common.`,
-    ],
-    examTips: [
-      `Start with the definition before explaining any concept — this shows structured thinking.`,
-      `Attempt all questions — there is no negative marking in CBSE boards.`,
-      `Time management: spend approximately 1 minute per mark (2-mark = 2 min, 5-mark = 5 min).`,
-      `Write neatly and use blue/black pen only. Red pen only for underlining key terms.`,
-      `If stuck on a numerical, write the formula and substitution — partial marks are given.`,
-    ],
-  };
-}
-
-function getNotesContent(subjectId: string, chapterName: string) {
-  return {
-    overview: `**${chapterName}** is a critical chapter in the CBSE Class 12 ${subjectId === "english" ? "English Core" : subjectId.charAt(0).toUpperCase() + subjectId.slice(1)} syllabus. This chapter carries significant weightage in board exams and has been consistently featured in previous year papers. The notes below are structured for maximum exam performance — covering every concept that has been tested in CBSE boards from 2015 to 2025.`,
-    definitions: [
-      `All key terms defined using exact CBSE-prescribed language with **highlighted keywords** that examiners look for.`,
-      `Each definition includes the context in which it should be used in different types of questions.`,
-      `Comparative definitions for easily confused terms, presented in table format.`,
-      `Historical context of key concepts (often asked in 1-mark factual questions).`,
-    ],
-    concepts: [
-      `Deep explanation of each concept going beyond NCERT but staying CBSE-aligned.`,
-      `Step-by-step breakdowns of complex ideas into simple, understandable parts.`,
-      `Analogies and real-world comparisons to make abstract concepts concrete.`,
-      `Mathematical relationships and their physical/chemical significance.`,
-      `Common derivations presented in exam-ready format with proper steps.`,
-    ],
-    diagrams: [
-      `Neat, labeled diagram descriptions for all major concepts in this chapter.`,
-      `Circuit diagrams / molecular structures / geometric representations as applicable.`,
-      `Flowcharts summarizing processes and classification hierarchies.`,
-      `Comparison tables for related concepts.`,
-    ],
-    boardPoints: [
-      `Topics with highest frequency in previous 10 years of CBSE board exams.`,
-      `Mark distribution analysis: which concepts appear as 2-mark vs 5-mark questions.`,
-      `Frequently repeated exact questions from previous boards.`,
-      `New pattern questions introduced in recent years (competency-based).`,
-    ],
-    answerTips: [
-      `Start every answer with a definition or statement of the principle involved.`,
-      `Include neat, labeled diagrams wherever possible — they can add 1 mark.`,
-      `Underline key terms and formulas in your answer.`,
-      `Write in numbered points for better readability — avoid lengthy paragraphs.`,
-      `For derivations: state the assumptions, write each step clearly, and box the final result.`,
-      `For numericals: Given → To Find → Formula → Substitution → Answer (with units).`,
-    ],
-    previousBoardQ: `Based on analysis of CBSE Board Papers (2015-2025), the most frequently asked question from ${chapterName} is a derivation-type 5-mark question. Students should prepare complete derivations with proper diagrams. The 2-mark questions typically test definitions and basic concepts. 3-mark questions focus on numerical problem-solving and conceptual explanations.`,
+    introduction: `This chapter covers the fundamental concepts of **${chapterName}** as prescribed by CBSE Class 12.`,
   };
 }
 
@@ -219,7 +145,6 @@ export default function ContentPage() {
   };
 
   const topics = getTopicsContent(subjectId!, chapter.name);
-  const notes = getNotesContent(subjectId!, chapter.name);
   const revision = getRevisionContent(chapter.name);
 
   return (
@@ -249,41 +174,44 @@ export default function ContentPage() {
 
         {/* ========== NOTES ========== */}
         {section === "notes" && (
-          <>
-            <ContentBlock title="Chapter Overview" icon={<BookOpen className="w-5 h-5 text-accent" />}>
-              <p>{notes.overview}</p>
-            </ContentBlock>
-            <ContentBlock title="Key Definitions (Exam-Ready)" icon={<Lightbulb className="w-5 h-5 text-primary" />}>
-              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                {notes.definitions.map((d, i) => <li key={i} dangerouslySetInnerHTML={{ __html: d.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />)}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="Deep Concept Explanation" icon={<FileText className="w-5 h-5 text-warning" />}>
-              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                {notes.concepts.map((c, i) => <li key={i}>{c}</li>)}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="Diagram Descriptions" icon={<BookOpen className="w-5 h-5 text-primary" />}>
-              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                {notes.diagrams.map((d, i) => <li key={i}>{d}</li>)}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="⭐ Important Board Exam Points" icon={<AlertTriangle className="w-5 h-5 text-destructive" />}>
-              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                {notes.boardPoints.map((b, i) => <li key={i}>{b}</li>)}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="✍️ Answer Writing Tips for Full Marks" icon={<Sparkles className="w-5 h-5 text-accent" />}>
-              <ul className="space-y-2">
-                {notes.answerTips.map((t, i) => (
-                  <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-accent font-bold shrink-0">→</span> {t}</li>
-                ))}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="📋 Previous Board Exam Analysis" icon={<BookOpen className="w-5 h-5 text-primary" />}>
-              <p>{notes.previousBoardQ}</p>
-            </ContentBlock>
-          </>
+          <AIExplainer
+            subject={subject.name}
+            chapter={chapter.name}
+            cacheKey={`notes-${subjectId}-${chapter.name}`}
+            prompt={`You are an expert CBSE Class 12 ${subject.name} teacher. Write comprehensive, topper-level notes for the chapter "${chapter.name}".
+
+These notes must be MORE detailed than NCERT. Structure them as:
+
+## Chapter Overview
+Brief overview of "${chapter.name}" — what it covers, why it matters, and its board exam weightage.
+
+## Key Definitions (Exam-Ready)
+List every important definition from this chapter using exact CBSE-prescribed language. **Bold** the key terms examiners look for.
+
+## Detailed Concept Explanation
+For each concept in "${chapter.name}":
+- Explain it deeply with reasoning
+- Include step-by-step derivations where applicable
+- Add solved examples after each concept
+- Mention related formulas in **bold**
+
+## Important Diagrams
+Describe all important diagrams with labels, axes, and key points marked.
+
+## Board Exam Important Points
+- High-weightage areas
+- Frequently asked question types (2015-2025 pattern)
+- Mark distribution analysis
+
+## Answer Writing Tips
+- How to write 2-mark, 3-mark, and 5-mark answers for this chapter
+- Presentation tips and scoring keywords
+
+## Previous Year Board Analysis
+Most repeated questions and patterns from this chapter.
+
+Use markdown with ## and ### headings, **bold** for key terms, bullet points, and numbered steps. Be thorough — these notes should replace a textbook.`}
+          />
         )}
 
         {/* ========== QUESTIONS ========== */}

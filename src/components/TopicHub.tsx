@@ -5,6 +5,7 @@ import {
   ChevronRight, Lightbulb, PenTool, GraduationCap
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import AIExplainer from "@/components/AIExplainer";
 
 interface TopicHubProps {
   subjectId: string;
@@ -405,22 +406,43 @@ function getSummaryData(subjectId: string, chapterName: string) {
 /* ─── Tab Components ─── */
 
 function ConceptsTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
-  const data = getConceptsData(subjectId, chapterName);
+  const subjectLabel = subjectId.charAt(0).toUpperCase() + subjectId.slice(1);
+  const prompt = `You are an expert CBSE Class 12 ${subjectLabel} teacher. Explain the chapter "${chapterName}" in full detail.
+
+Your explanation must be MORE detailed and vast than NCERT. Structure it as follows:
+
+## Introduction
+A clear introduction to ${chapterName} with real-world relevance.
+
+## Subtopic-wise Detailed Explanation
+Break "${chapterName}" into its actual subtopics (use the real NCERT subtopics). For EACH subtopic:
+- Give the precise **definition**
+- Explain the **concept** deeply with reasoning and logic
+- Show **step-by-step derivations** (for Maths/Physics)
+- Provide a **solved example** after each major concept
+- Mention **important formulas** in bold
+
+## Key Formulas & Equations
+List all formulas from this chapter with every variable defined.
+
+## Diagrams & Visual Descriptions
+Describe important diagrams students should know, with labels.
+
+## Applications & Real-World Connections
+How this chapter connects to daily life, technology, and competitive exams.
+
+## Board Exam Relevance
+Mark weightage, frequently asked question types, and previous year patterns.
+
+Use markdown formatting with clear headings (##, ###), bold terms, bullet points, and numbered steps. Be thorough — a student should be able to study this instead of a textbook.`;
+
   return (
-    <div className="space-y-5">
-      <Section title="Introduction & Overview" icon={<BookOpen className="w-5 h-5 text-primary" />}>
-        <p dangerouslySetInnerHTML={{ __html: data.introduction.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
-      </Section>
-      {data.subtopics.map((sub, i) => (
-        <Section
-          key={i}
-          title={`${i + 1}. ${sub.title}`}
-          icon={<Lightbulb className="w-5 h-5 text-warning" />}
-        >
-          <BulletList items={sub.content} marker="▸" markerClass="text-primary" />
-        </Section>
-      ))}
-    </div>
+    <AIExplainer
+      subject={subjectLabel}
+      chapter={chapterName}
+      prompt={prompt}
+      cacheKey={`concepts-${subjectId}-${chapterName}`}
+    />
   );
 }
 
