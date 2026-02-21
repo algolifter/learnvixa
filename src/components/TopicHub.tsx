@@ -6,9 +6,12 @@ import {
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AIExplainer from "@/components/AIExplainer";
+import TopicPageViewer from "@/components/TopicPageViewer";
+import { getChapterContent } from "@/data/content";
 
 interface TopicHubProps {
   subjectId: string;
+  chapterId: number;
   chapterName: string;
 }
 
@@ -21,7 +24,7 @@ const TAB_CONFIG = [
   { id: "summary", label: "Quick Summary", icon: Zap, shortLabel: "Summary" },
 ] as const;
 
-export default function TopicHub({ subjectId, chapterName }: TopicHubProps) {
+export default function TopicHub({ subjectId, chapterId, chapterName }: TopicHubProps) {
   const [activeTab, setActiveTab] = useState("concepts");
 
   return (
@@ -70,7 +73,7 @@ export default function TopicHub({ subjectId, chapterName }: TopicHubProps) {
             transition={{ duration: 0.2 }}
           >
             <TabsContent value="concepts" className="mt-0">
-              <ConceptsTab subjectId={subjectId} chapterName={chapterName} />
+              <ConceptsTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="important" className="mt-0">
               <ImportantPointsTab subjectId={subjectId} chapterName={chapterName} />
@@ -405,7 +408,15 @@ function getSummaryData(subjectId: string, chapterName: string) {
 
 /* ─── Tab Components ─── */
 
-function ConceptsTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function ConceptsTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+
+  // If we have pre-written static content, show paginated viewer
+  if (chapterContent) {
+    return <TopicPageViewer pages={chapterContent.topics} />;
+  }
+
+  // Fallback: AI-generated for chapters without static content yet
   const subjectLabel = subjectId.charAt(0).toUpperCase() + subjectId.slice(1);
   const prompt = `You are an expert CBSE Class 12 ${subjectLabel} teacher. Explain the chapter "${chapterName}" in full detail.
 

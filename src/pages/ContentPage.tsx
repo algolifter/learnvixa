@@ -6,6 +6,8 @@ import { ArrowLeft, CheckCircle2, Sparkles, AlertTriangle, Lightbulb, BookOpen, 
 import AITeacherPanel from "@/components/AITeacherPanel";
 import TopicHub from "@/components/TopicHub";
 import AIExplainer from "@/components/AIExplainer";
+import ReactMarkdown from "react-markdown";
+import { getChapterContent } from "@/data/content";
 
 // Rich content generator based on chapter context (used for questions & revision)
 function getTopicsContent(subjectId: string, chapterName: string) {
@@ -169,16 +171,39 @@ export default function ContentPage() {
 
         {/* ========== TOPICS (Tabbed Hub) ========== */}
         {section === "topics" && (
-          <TopicHub subjectId={subjectId!} chapterName={chapter.name} />
+          <TopicHub subjectId={subjectId!} chapterId={chapter.id} chapterName={chapter.name} />
         )}
 
         {/* ========== NOTES ========== */}
-        {section === "notes" && (
-          <AIExplainer
-            subject={subject.name}
-            chapter={chapter.name}
-            cacheKey={`notes-${subjectId}-${chapter.name}`}
-            prompt={`You are an expert CBSE Class 12 ${subject.name} teacher. Write comprehensive, topper-level notes for the chapter "${chapter.name}".
+        {section === "notes" && (() => {
+          const chapterContent = getChapterContent(subjectId!, chapter.id);
+          if (chapterContent) {
+            return (
+              <div className="glass rounded-xl p-5 space-y-4">
+                <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed
+                  prose-headings:text-foreground prose-headings:font-display
+                  prose-h2:text-base prose-h2:mt-6 prose-h2:mb-2
+                  prose-h3:text-sm prose-h3:mt-4 prose-h3:mb-1
+                  prose-strong:text-foreground
+                  prose-li:my-0.5
+                  prose-p:my-2
+                  prose-table:text-xs
+                  prose-th:text-foreground prose-th:bg-muted/50 prose-th:px-3 prose-th:py-2
+                  prose-td:px-3 prose-td:py-1.5 prose-td:border-border
+                  prose-blockquote:border-primary prose-blockquote:text-muted-foreground
+                  prose-code:bg-muted prose-code:px-1 prose-code:rounded prose-code:text-xs
+                ">
+                  <ReactMarkdown>{chapterContent.notes}</ReactMarkdown>
+                </div>
+              </div>
+            );
+          }
+          return (
+            <AIExplainer
+              subject={subject.name}
+              chapter={chapter.name}
+              cacheKey={`notes-${subjectId}-${chapter.name}`}
+              prompt={`You are an expert CBSE Class 12 ${subject.name} teacher. Write comprehensive, topper-level notes for the chapter "${chapter.name}".
 
 These notes must be MORE detailed than NCERT. Structure them as:
 
@@ -211,8 +236,9 @@ Describe all important diagrams with labels, axes, and key points marked.
 Most repeated questions and patterns from this chapter.
 
 Use markdown with ## and ### headings, **bold** for key terms, bullet points, and numbered steps. Be thorough — these notes should replace a textbook.`}
-          />
-        )}
+            />
+          );
+        })()}
 
         {/* ========== QUESTIONS ========== */}
         {(section === "q2mark" || section === "q3mark" || section === "q5mark") && (() => {
