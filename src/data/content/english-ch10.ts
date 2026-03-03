@@ -1,0 +1,7 @@
+import type { ChapterContent } from "./physics-ch1";
+export const englishCh10: ChapterContent = {
+  topics: [
+    { title: "Analysis", content: `## An Elementary School Classroom in a Slum — Stephen Spender\n\n### Summary\nThe poem contrasts the **bleak reality** of slum children with the **bright world** depicted on classroom walls (maps, Shakespeare, "civilised" images). The poet appeals to authorities to break down barriers and give these children access to the real world.\n\n### Stanza-wise Analysis\n1. **Stanza 1**: Description of children — pale, thin, stunted growth, "rootless weeds"\n2. **Stanza 2**: Classroom donations — maps, Shakespeare — meaningless to slum children\n3. **Stanza 3**: Maps show "beautiful" world but slum is their only reality; "slag heap" = their world\n4. **Stanza 4**: Appeal — break barriers, let children access nature, books, the real world\n\n### Themes\n1. Social inequality and class divide\n2. Irrelevance of mainstream education for the underprivileged\n3. Need for meaningful change (not just charity)\n\n> **Exam Tip**: The contrast between the world of maps/Shakespeare and the slum reality is the poem's core. The poet's solution: "Break O break open" — active intervention, not passive charity.` }
+  ],
+  notes: `# Elementary School Classroom in a Slum — Notes\n\n## Poet: Stephen Spender\n## Contrast: classroom walls (bright world) vs slum reality\n## Children: pale, thin, "rootless weeds"\n## Message: Break barriers; give real access, not just decorative education`
+};

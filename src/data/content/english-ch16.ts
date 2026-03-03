@@ -1,0 +1,7 @@
+import type { ChapterContent } from "./physics-ch1";
+export const englishCh16: ChapterContent = {
+  topics: [
+    { title: "Summary and Themes", content: `## The Tiger King — Kalki\n\n### Summary\nThe Maharaja of Pratibandapuram is prophesied to be killed by a **tiger**. He obsessively hunts tigers to defy fate, killing 99. The 100th tiger is actually missed by his bullet but killed by a hunter. Ironically, the king dies from an infection caused by a **wooden toy tiger's** splinter.\n\n### Themes\n1. **Irony of fate**: Despite killing 99 tigers, a toy tiger kills him\n2. **Satire on power**: The king's arrogance and misuse of authority\n3. **Futility of defying destiny**: Fate finds a way regardless\n4. **Conservation**: Mindless hunting of endangered species\n\n### Humour and Satire\n- The king marries specifically to access forests with more tigers\n- Officials tremble; a dewan tries to trick him with an old tiger\n- The 100th tiger faints from the bullet's whoosh — not actually killed\n\n> **Exam Tip**: The dramatic irony — a mighty hunter killed by a wooden toy — is the story's core. The satire targets both royal arrogance and superstition.` }
+  ],
+  notes: `# The Tiger King — Notes\n\n## Author: Kalki (Ramaswami Krishnamurthy)\n## Prophecy: king will die by tiger; kills 99 real tigers\n## Irony: dies from wooden toy tiger's splinter\n## Theme: fate is inevitable; satire on royal arrogance`
+};

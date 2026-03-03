@@ -1,0 +1,7 @@
+import type { ChapterContent } from "./physics-ch1";
+export const englishCh14: ChapterContent = {
+  topics: [
+    { title: "Analysis", content: `## Aunt Jennifer's Tigers — Adrienne Rich\n\n### Summary\nAunt Jennifer embroiders **tigers on a panel** — they are bold, confident, fearless. But Jennifer herself is oppressed by her marriage ("massive weight of Uncle's wedding band"). Even after death, her tigers will continue to prance, free and unafraid.\n\n### Contrast\n- **Tigers**: bold, proud, fearless, "denizens of a world of green"\n- **Aunt Jennifer**: terrified, oppressed, fingers fluttering, burdened\n\n### Literary Devices\n- **Symbolism**: Tigers = desire for freedom; wedding band = oppression\n- **Contrast**: Art vs reality; freedom vs subjugation\n- **Imagery**: "bright topaz denizens", "prancing, proud and unafraid"\n\n### Themes\n1. Patriarchal oppression of women\n2. Art as an expression of suppressed desires\n3. The permanence of art vs the mortality of the artist\n4. Gender inequality in marriage\n\n> **Exam Tip**: The contrast between the bold tigers and the timid Aunt Jennifer is the central device. The tigers outlive her — art transcends the artist's oppression.` }
+  ],
+  notes: `# Aunt Jennifer's Tigers — Notes\n\n## Poet: Adrienne Rich\n## Tigers: bold, free (what Jennifer desires)\n## Jennifer: oppressed by marriage ("Uncle's wedding band")\n## Theme: patriarchy, art as liberation, permanence of art`
+};
