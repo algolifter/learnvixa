@@ -1,0 +1,9 @@
+import type { ChapterContent } from "./physics-ch1";
+
+export const englishCh3: ChapterContent = {
+  topics: [
+    { title: "Introduction", content: `## Deep Water — William Douglas\n\nAutobiographical account of Douglas's **fear of water** and how he overcame it through determination and professional instruction.\n\n### Key Events\n1. First water experience: knocked down by waves at California beach (age 3-4)\n2. Near-drowning at YMCA pool (age 10-11) — the central incident\n3. Hired an instructor, learned swimming systematically\n4. Conquered fear by swimming in lakes and rivers\n\n> **Exam Tip**: The chapter is about conquering fear through willpower. Roosevelt's quote "All we have to fear is fear itself" is the central message.` },
+    { title: "Themes and Questions", content: `## Themes\n\n### 1. Overcoming Fear\nDouglas's journey from paralysing hydrophobia to confident swimmer.\n\n### 2. Willpower and Determination\nHe didn't accept his fear — he actively fought it with professional help and practice.\n\n### 3. Terror of Death\nThe near-drowning experience gave him a visceral understanding of death.\n\n**Q: How did Douglas overcome his fear of water?**\nA: He hired a swimming instructor who used a belt-and-pulley system, practised for months, then tested himself in lakes and rivers until the fear was completely gone.\n\n**Q: What is the significance of the title "Deep Water"?**\nA: It represents both the literal deep water Douglas feared and the deep-seated fear within him that he had to conquer.\n\n> **Board Tip**: Focus on the process of overcoming fear — the systematic approach (instructor → practice → real-world test) shows determination.` }
+  ],
+  notes: `# Deep Water — Notes\n\n## Author: William O. Douglas\n## Theme: Overcoming fear through determination\n## Key: Near-drowning at YMCA → hired instructor → conquered fear\n## Message: "All we have to fear is fear itself" (Roosevelt)`
+};

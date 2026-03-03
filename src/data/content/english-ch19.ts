@@ -1,0 +1,7 @@
+import type { ChapterContent } from "./physics-ch1";
+export const englishCh19: ChapterContent = {
+  topics: [
+    { title: "Summary and Themes", content: `## On the Face of It — Susan Hill\n\n### Summary\nA play about **Derry** (14-year-old boy with acid-burnt face) and **Mr. Lamb** (old man with a tin leg) who meet in Mr. Lamb's garden. Mr. Lamb helps Derry see beyond his disfigurement, teaching him to embrace life. Derry leaves to tell his mother but returns to find Mr. Lamb has fallen from a ladder and died.\n\n### Characters\n- **Derry**: Self-pitying, withdrawn, bitter about his face\n- **Mr. Lamb**: Optimistic, open, welcoming; "Lamey Lamb" but unbothered\n\n### Themes\n1. **Physical disability and social attitudes**: How society treats the "different"\n2. **Self-pity vs acceptance**: Derry's bitterness vs Lamb's positivity\n3. **Loneliness and companionship**: Both are lonely but for different reasons\n4. **Appearance vs reality**: Derry judges himself; Lamb looks beyond appearances\n\n### Key Dialogue\n- Lamb: "It's all relative. Beauty and the beast."\n- Lamb: "I don't care if people look at me. I watch them."\n\n> **Exam Tip**: Mr. Lamb's philosophy of acceptance and openness contrasted with Derry's self-pity is the core. The tragic ending adds poignancy — just when Derry finds hope, Lamb dies.` }
+  ],
+  notes: `# On the Face of It — Notes\n\n## Author: Susan Hill (play)\n## Derry: acid-burnt face, bitter; Mr. Lamb: tin leg, optimistic\n## Theme: disability, self-acceptance, loneliness\n## Tragic ending: Lamb dies as Derry returns`
+};
