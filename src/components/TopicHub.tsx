@@ -7,7 +7,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AIExplainer from "@/components/AIExplainer";
 import TopicPageViewer from "@/components/TopicPageViewer";
-import { getChapterContent } from "@/data/content";
+import { getChapterContent, type ChapterContent } from "@/data/content";
 
 interface TopicHubProps {
   subjectId: string;
