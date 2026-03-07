@@ -487,7 +487,17 @@ function ImportantPointsTab({ subjectId, chapterId, chapterName }: { subjectId: 
   );
 }
 
-function CommonMistakesTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function CommonMistakesTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.commonMistakes?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="✗ Common Mistakes — Chapter Specific" icon={<XCircle className="w-5 h-5 text-destructive" />}>
+          <BulletList items={chapterContent.commonMistakes} marker="✗" markerClass="text-destructive" />
+        </Section>
+      </div>
+    );
+  }
   const data = getCommonMistakesData(subjectId, chapterName);
   return (
     <div className="space-y-5">
