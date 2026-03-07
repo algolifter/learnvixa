@@ -300,45 +300,100 @@ Use markdown with ## and ### headings, **bold** for key terms, bullet points, an
         })()}
 
         {/* ========== REVISION ========== */}
-        {section === "revision" && (
-          <>
-            <ContentBlock title="📋 Quick Revision Sheet" icon={<BookOpen className="w-5 h-5 text-accent" />}>
-              <ul className="space-y-2">
-                {revision.quickRevision.map((r, i) => (
-                  <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-primary font-bold shrink-0">{i + 1}.</span> {r}</li>
-                ))}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="📐 Key Formulas & Expressions" icon={<Lightbulb className="w-5 h-5 text-primary" />}>
-              <ul className="space-y-2">
-                {revision.formulas.map((f, i) => (
-                  <li key={i} className="bg-muted/50 rounded-lg px-3 py-2 text-sm text-foreground">{f}</li>
-                ))}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="🎯 High Weightage Topics" icon={<AlertTriangle className="w-5 h-5 text-destructive" />}>
-              <ul className="space-y-2">
-                {revision.highWeightage.map((h, i) => (
-                  <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-warning font-bold shrink-0">★</span> {h}</li>
-                ))}
-              </ul>
-            </ContentBlock>
-            <ContentBlock title="✅ Assertion & Reason Practice" icon={<Sparkles className="w-5 h-5 text-accent" />}>
-              <div className="space-y-3">
-                {revision.assertionReason.map((ar, i) => (
-                  <div key={i} className="bg-muted/50 rounded-lg px-4 py-3 text-sm text-foreground whitespace-pre-line">{ar}</div>
-                ))}
-              </div>
-            </ContentBlock>
-            <ContentBlock title="🧠 Mind Map Summary" icon={<BookOpen className="w-5 h-5 text-primary" />}>
-              <div className="space-y-2">
-                {revision.mindMap.map((m, i) => (
-                  <div key={i} className="bg-muted/50 rounded-lg px-3 py-2 text-sm text-foreground font-mono">{m}</div>
-                ))}
-              </div>
-            </ContentBlock>
-          </>
-        )}
+        {section === "revision" && (() => {
+          const chapterContent = getChapterContent(subjectId!, chapter.id);
+          if (chapterContent?.revision) {
+            const rev = chapterContent.revision;
+            return (
+              <>
+                <ContentBlock title="📋 Quick Revision Points" icon={<BookOpen className="w-5 h-5 text-accent" />}>
+                  <ul className="space-y-2">
+                    {rev.quickPoints.map((r, i) => (
+                      <li key={i} className="flex gap-2 text-muted-foreground">
+                        <span className="text-primary font-bold shrink-0">{i + 1}.</span>
+                        <span dangerouslySetInnerHTML={{ __html: r.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
+                      </li>
+                    ))}
+                  </ul>
+                </ContentBlock>
+                {rev.formulas?.length && (
+                  <ContentBlock title="📐 Key Formulas" icon={<Lightbulb className="w-5 h-5 text-primary" />}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {rev.formulas.map((f, i) => (
+                        <div key={i} className="bg-muted/50 rounded-lg px-3 py-2 text-sm text-foreground font-mono"
+                          dangerouslySetInnerHTML={{ __html: f.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
+                      ))}
+                    </div>
+                  </ContentBlock>
+                )}
+                {rev.tipsAndTricks?.length && (
+                  <ContentBlock title="💡 Tips & Tricks" icon={<Sparkles className="w-5 h-5 text-accent" />}>
+                    <ul className="space-y-2">
+                      {rev.tipsAndTricks.map((t, i) => (
+                        <li key={i} className="flex gap-2 text-muted-foreground">
+                          <span className="text-warning font-bold shrink-0">★</span>
+                          <span dangerouslySetInnerHTML={{ __html: t.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
+                        </li>
+                      ))}
+                    </ul>
+                  </ContentBlock>
+                )}
+                {rev.diagrams?.length && (
+                  <ContentBlock title="📊 Key Diagrams to Remember" icon={<FileText className="w-5 h-5 text-primary" />}>
+                    <ul className="space-y-2">
+                      {rev.diagrams.map((d, i) => (
+                        <li key={i} className="flex gap-2 text-muted-foreground">
+                          <span className="text-accent font-bold shrink-0">▸</span>
+                          <span dangerouslySetInnerHTML={{ __html: d.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
+                        </li>
+                      ))}
+                    </ul>
+                  </ContentBlock>
+                )}
+              </>
+            );
+          }
+          
+          return (
+            <>
+              <ContentBlock title="📋 Quick Revision Sheet" icon={<BookOpen className="w-5 h-5 text-accent" />}>
+                <ul className="space-y-2">
+                  {revision.quickRevision.map((r, i) => (
+                    <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-primary font-bold shrink-0">{i + 1}.</span> {r}</li>
+                  ))}
+                </ul>
+              </ContentBlock>
+              <ContentBlock title="📐 Key Formulas & Expressions" icon={<Lightbulb className="w-5 h-5 text-primary" />}>
+                <ul className="space-y-2">
+                  {revision.formulas.map((f, i) => (
+                    <li key={i} className="bg-muted/50 rounded-lg px-3 py-2 text-sm text-foreground">{f}</li>
+                  ))}
+                </ul>
+              </ContentBlock>
+              <ContentBlock title="🎯 High Weightage Topics" icon={<AlertTriangle className="w-5 h-5 text-destructive" />}>
+                <ul className="space-y-2">
+                  {revision.highWeightage.map((h, i) => (
+                    <li key={i} className="flex gap-2 text-muted-foreground"><span className="text-warning font-bold shrink-0">★</span> {h}</li>
+                  ))}
+                </ul>
+              </ContentBlock>
+              <ContentBlock title="✅ Assertion & Reason Practice" icon={<Sparkles className="w-5 h-5 text-accent" />}>
+                <div className="space-y-3">
+                  {revision.assertionReason.map((ar, i) => (
+                    <div key={i} className="bg-muted/50 rounded-lg px-4 py-3 text-sm text-foreground whitespace-pre-line">{ar}</div>
+                  ))}
+                </div>
+              </ContentBlock>
+              <ContentBlock title="🧠 Mind Map Summary" icon={<BookOpen className="w-5 h-5 text-primary" />}>
+                <div className="space-y-2">
+                  {revision.mindMap.map((m, i) => (
+                    <div key={i} className="bg-muted/50 rounded-lg px-3 py-2 text-sm text-foreground font-mono">{m}</div>
+                  ))}
+                </div>
+              </ContentBlock>
+            </>
+          );
+        })()}
 
         {/* AI Teacher */}
         <AITeacherPanel
