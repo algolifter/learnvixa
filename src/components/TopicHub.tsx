@@ -76,19 +76,19 @@ export default function TopicHub({ subjectId, chapterId, chapterName }: TopicHub
               <ConceptsTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="important" className="mt-0">
-              <ImportantPointsTab subjectId={subjectId} chapterName={chapterName} />
+              <ImportantPointsTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="mistakes" className="mt-0">
-              <CommonMistakesTab subjectId={subjectId} chapterName={chapterName} />
+              <CommonMistakesTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="strategy" className="mt-0">
-              <ExamStrategyTab subjectId={subjectId} chapterName={chapterName} />
+              <ExamStrategyTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="examples" className="mt-0">
-              <ExamplesTab subjectId={subjectId} chapterName={chapterName} />
+              <ExamplesTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="summary" className="mt-0">
-              <SummaryTab subjectId={subjectId} chapterName={chapterName} />
+              <SummaryTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
           </motion.div>
         </AnimatePresence>
