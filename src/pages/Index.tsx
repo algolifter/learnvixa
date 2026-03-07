@@ -109,8 +109,11 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Motivational Quote */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="glass rounded-xl p-4 mb-8 text-center max-w-2xl mx-auto">
-        <p className="text-muted-foreground italic text-sm">"{quote}"</p>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="glass rounded-xl p-4 mb-8 text-center max-w-2xl mx-auto relative">
+        <p className="text-muted-foreground italic text-sm px-8">"{quote}"</p>
+        <button onClick={refreshQuote} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors" title="New quote">
+          <RefreshCw className="w-4 h-4" />
+        </button>
       </motion.div>
 
       {/* Subject Cards */}
