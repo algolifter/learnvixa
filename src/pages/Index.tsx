@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { subjects, motivationalQuotes } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
-import { BookOpen, Clock, Flame, Target, Sparkles, Wind, Zap, TrendingUp } from "lucide-react";
+import { BookOpen, Clock, Flame, Target, Sparkles, Wind, Zap, TrendingUp, RefreshCw } from "lucide-react";
 
 const EXAM_DATE = new Date("2027-03-02");
 

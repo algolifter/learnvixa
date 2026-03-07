@@ -14,6 +14,7 @@ import BoardPredictorPage from "./pages/BoardPredictorPage";
 import NotFound from "./pages/NotFound";
 import ThemeToggle from "./components/ThemeToggle";
 import AIChatbot from "./components/AIChatbot";
+import NavigationMenu from "./components/NavigationMenu";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
       <ThemeToggle />
       <AIChatbot />
       <BrowserRouter>
+        <NavigationMenu />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/subject/:subjectId" element={<SubjectPage />} />
