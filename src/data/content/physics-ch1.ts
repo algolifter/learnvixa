@@ -6,9 +6,28 @@ export interface TopicPage {
   content: string; // Markdown
 }
 
+export interface QuestionItem {
+  question: string;
+  answer?: string;
+}
+
 export interface ChapterContent {
   topics: TopicPage[];
   notes: string; // Full markdown notes
+  importantPoints?: string[];
+  commonMistakes?: string[];
+  examStrategy?: string[];
+  examples?: string[];
+  summary?: string;
+  questions2?: QuestionItem[];
+  questions3?: QuestionItem[];
+  questions5?: QuestionItem[];
+  revision?: {
+    quickPoints: string[];
+    formulas?: string[];
+    diagrams?: string[];
+    tipsAndTricks?: string[];
+  };
 }
 
 export const physicsCh1: ChapterContent = {
