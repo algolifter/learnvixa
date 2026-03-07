@@ -597,7 +597,19 @@ function ExamplesTab({ subjectId, chapterId, chapterName }: { subjectId: string;
   );
 }
 
-function SummaryTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function SummaryTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.summary) {
+    return (
+      <div className="space-y-5">
+        <Section title="⚡ Chapter Summary" icon={<Zap className="w-5 h-5 text-warning" />}>
+          <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed prose-headings:text-foreground prose-headings:font-display prose-strong:text-foreground prose-h2:text-base prose-h3:text-sm">
+            <div dangerouslySetInnerHTML={{ __html: chapterContent.summary.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>').replace(/\n/g, '<br/>') }} />
+          </div>
+        </Section>
+      </div>
+    );
+  }
   const data = getSummaryData(subjectId, chapterName);
   return (
     <div className="space-y-5">
