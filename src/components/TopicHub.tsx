@@ -7,7 +7,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AIExplainer from "@/components/AIExplainer";
 import TopicPageViewer from "@/components/TopicPageViewer";
-import { getChapterContent } from "@/data/content";
+import { getChapterContent, type ChapterContent } from "@/data/content";
 
 interface TopicHubProps {
   subjectId: string;
@@ -76,19 +76,19 @@ export default function TopicHub({ subjectId, chapterId, chapterName }: TopicHub
               <ConceptsTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="important" className="mt-0">
-              <ImportantPointsTab subjectId={subjectId} chapterName={chapterName} />
+              <ImportantPointsTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="mistakes" className="mt-0">
-              <CommonMistakesTab subjectId={subjectId} chapterName={chapterName} />
+              <CommonMistakesTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="strategy" className="mt-0">
-              <ExamStrategyTab subjectId={subjectId} chapterName={chapterName} />
+              <ExamStrategyTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="examples" className="mt-0">
-              <ExamplesTab subjectId={subjectId} chapterName={chapterName} />
+              <ExamplesTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
             <TabsContent value="summary" className="mt-0">
-              <SummaryTab subjectId={subjectId} chapterName={chapterName} />
+              <SummaryTab subjectId={subjectId} chapterId={chapterId} chapterName={chapterName} />
             </TabsContent>
           </motion.div>
         </AnimatePresence>
@@ -457,7 +457,17 @@ Use markdown formatting with clear headings (##, ###), bold terms, bullet points
   );
 }
 
-function ImportantPointsTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function ImportantPointsTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.importantPoints?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="🎯 Important Points — Chapter Specific" icon={<AlertTriangle className="w-5 h-5 text-destructive" />}>
+          <BulletList items={chapterContent.importantPoints} marker="★" markerClass="text-warning" />
+        </Section>
+      </div>
+    );
+  }
   const data = getImportantPointsData(subjectId, chapterName);
   return (
     <div className="space-y-5">
@@ -477,7 +487,17 @@ function ImportantPointsTab({ subjectId, chapterName }: { subjectId: string; cha
   );
 }
 
-function CommonMistakesTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function CommonMistakesTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.commonMistakes?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="✗ Common Mistakes — Chapter Specific" icon={<XCircle className="w-5 h-5 text-destructive" />}>
+          <BulletList items={chapterContent.commonMistakes} marker="✗" markerClass="text-destructive" />
+        </Section>
+      </div>
+    );
+  }
   const data = getCommonMistakesData(subjectId, chapterName);
   return (
     <div className="space-y-5">
@@ -497,7 +517,17 @@ function CommonMistakesTab({ subjectId, chapterName }: { subjectId: string; chap
   );
 }
 
-function ExamStrategyTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function ExamStrategyTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.examStrategy?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="🎯 Exam Strategy — Chapter Specific" icon={<Target className="w-5 h-5 text-primary" />}>
+          <BulletList items={chapterContent.examStrategy} marker="▸" markerClass="text-primary" />
+        </Section>
+      </div>
+    );
+  }
   const data = getExamStrategyData(subjectId, chapterName);
   return (
     <div className="space-y-5">
@@ -523,7 +553,17 @@ function ExamStrategyTab({ subjectId, chapterName }: { subjectId: string; chapte
   );
 }
 
-function ExamplesTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function ExamplesTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.examples?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="📊 Examples & Illustrations — Chapter Specific" icon={<FlaskConical className="w-5 h-5 text-primary" />}>
+          <BulletList items={chapterContent.examples} marker="✦" markerClass="text-primary" />
+        </Section>
+      </div>
+    );
+  }
   const data = getExamplesData(subjectId, chapterName);
   return (
     <div className="space-y-5">
@@ -557,7 +597,19 @@ function ExamplesTab({ subjectId, chapterName }: { subjectId: string; chapterNam
   );
 }
 
-function SummaryTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function SummaryTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.summary) {
+    return (
+      <div className="space-y-5">
+        <Section title="⚡ Chapter Summary" icon={<Zap className="w-5 h-5 text-warning" />}>
+          <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed prose-headings:text-foreground prose-headings:font-display prose-strong:text-foreground prose-h2:text-base prose-h3:text-sm">
+            <div dangerouslySetInnerHTML={{ __html: chapterContent.summary.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>').replace(/\n/g, '<br/>') }} />
+          </div>
+        </Section>
+      </div>
+    );
+  }
   const data = getSummaryData(subjectId, chapterName);
   return (
     <div className="space-y-5">

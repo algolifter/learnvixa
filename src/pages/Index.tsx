@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { subjects, motivationalQuotes } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
-import { BookOpen, Clock, Flame, Target, Sparkles, Wind, Zap, TrendingUp } from "lucide-react";
+import { BookOpen, Clock, Flame, Target, Sparkles, Wind, Zap, TrendingUp, RefreshCw } from "lucide-react";
 
 const EXAM_DATE = new Date("2027-03-02");
 
@@ -35,9 +35,19 @@ export default function Dashboard() {
   const { getSubjectProgress, getOverallProgress } = useStudyProgress();
   const [quote, setQuote] = useState("");
   const [daysLeft, setDaysLeft] = useState(getDaysRemaining());
+  const [quoteIndex, setQuoteIndex] = useState(0);
+
+  const refreshQuote = () => {
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * motivationalQuotes.length);
+    } while (newIndex === quoteIndex && motivationalQuotes.length > 1);
+    setQuoteIndex(newIndex);
+    setQuote(motivationalQuotes[newIndex]);
+  };
 
   useEffect(() => {
-    setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
+    refreshQuote();
     const timer = setInterval(() => setDaysLeft(getDaysRemaining()), 60000);
     return () => clearInterval(timer);
   }, []);
@@ -99,8 +109,11 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Motivational Quote */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="glass rounded-xl p-4 mb-8 text-center max-w-2xl mx-auto">
-        <p className="text-muted-foreground italic text-sm">"{quote}"</p>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="glass rounded-xl p-4 mb-8 text-center max-w-2xl mx-auto relative">
+        <p className="text-muted-foreground italic text-sm px-8">"{quote}"</p>
+        <button onClick={refreshQuote} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors" title="New quote">
+          <RefreshCw className="w-4 h-4" />
+        </button>
       </motion.div>
 
       {/* Subject Cards */}
