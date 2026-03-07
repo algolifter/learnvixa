@@ -553,7 +553,17 @@ function ExamStrategyTab({ subjectId, chapterId, chapterName }: { subjectId: str
   );
 }
 
-function ExamplesTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function ExamplesTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.examples?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="📊 Examples & Illustrations — Chapter Specific" icon={<FlaskConical className="w-5 h-5 text-primary" />}>
+          <BulletList items={chapterContent.examples} marker="✦" markerClass="text-primary" />
+        </Section>
+      </div>
+    );
+  }
   const data = getExamplesData(subjectId, chapterName);
   return (
     <div className="space-y-5">
