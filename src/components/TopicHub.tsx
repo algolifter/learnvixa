@@ -517,7 +517,17 @@ function CommonMistakesTab({ subjectId, chapterId, chapterName }: { subjectId: s
   );
 }
 
-function ExamStrategyTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function ExamStrategyTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.examStrategy?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="🎯 Exam Strategy — Chapter Specific" icon={<Target className="w-5 h-5 text-primary" />}>
+          <BulletList items={chapterContent.examStrategy} marker="▸" markerClass="text-primary" />
+        </Section>
+      </div>
+    );
+  }
   const data = getExamStrategyData(subjectId, chapterName);
   return (
     <div className="space-y-5">
