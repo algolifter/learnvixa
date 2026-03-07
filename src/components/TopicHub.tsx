@@ -457,7 +457,17 @@ Use markdown formatting with clear headings (##, ###), bold terms, bullet points
   );
 }
 
-function ImportantPointsTab({ subjectId, chapterName }: { subjectId: string; chapterName: string }) {
+function ImportantPointsTab({ subjectId, chapterId, chapterName }: { subjectId: string; chapterId: number; chapterName: string }) {
+  const chapterContent = getChapterContent(subjectId, chapterId);
+  if (chapterContent?.importantPoints?.length) {
+    return (
+      <div className="space-y-5">
+        <Section title="🎯 Important Points — Chapter Specific" icon={<AlertTriangle className="w-5 h-5 text-destructive" />}>
+          <BulletList items={chapterContent.importantPoints} marker="★" markerClass="text-warning" />
+        </Section>
+      </div>
+    );
+  }
   const data = getImportantPointsData(subjectId, chapterName);
   return (
     <div className="space-y-5">
