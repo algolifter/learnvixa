@@ -243,12 +243,44 @@ Use markdown with ## and ### headings, **bold** for key terms, bullet points, an
         {/* ========== QUESTIONS ========== */}
         {(section === "q2mark" || section === "q3mark" || section === "q5mark") && (() => {
           const marks = section === "q2mark" ? 2 : section === "q3mark" ? 3 : 5;
+          const chapterContent = getChapterContent(subjectId!, chapter.id);
+          const chapterQuestions = marks === 2 ? chapterContent?.questions2 : marks === 3 ? chapterContent?.questions3 : chapterContent?.questions5;
+          
+          if (chapterQuestions?.length) {
+            return (
+              <>
+                <ContentBlock title={`${marks}-Mark Questions — ${chapter.name}`} icon={<BookOpen className="w-5 h-5 text-primary" />}>
+                  <p>Chapter-specific CBSE-pattern {marks}-mark questions with answers.</p>
+                </ContentBlock>
+                <div className="space-y-3">
+                  {chapterQuestions.map((q, i) => (
+                    <div key={i} className="glass rounded-xl p-4">
+                      <div className="flex gap-3">
+                        <span className="text-primary font-display font-bold text-sm shrink-0">Q{i + 1}.</span>
+                        <div className="flex-1 space-y-2">
+                          <p className="text-sm text-foreground font-medium">{q.question}</p>
+                          {q.answer && (
+                            <details className="group">
+                              <summary className="text-xs text-primary cursor-pointer hover:underline">Show Answer</summary>
+                              <div className="mt-2 text-sm text-muted-foreground bg-muted/40 rounded-lg p-3 leading-relaxed whitespace-pre-line">{q.answer}</div>
+                            </details>
+                          )}
+                          <span className="text-xs text-muted-foreground">[{marks} Marks]</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            );
+          }
+          
           const count = marks === 5 ? 15 : 20;
           const questions = generateQuestions(marks, chapter.name, count);
           return (
             <>
               <ContentBlock title={`Practice Questions (${marks} Marks)`} icon={<BookOpen className="w-5 h-5 text-primary" />}>
-                <p>CBSE-pattern {marks}-mark questions for <strong>{chapter.name}</strong>. Practice these to build exam confidence. These questions cover definitions, derivations, numericals, and conceptual understanding as per the latest CBSE marking scheme.</p>
+                <p>CBSE-pattern {marks}-mark questions for <strong>{chapter.name}</strong>. Practice these to build exam confidence.</p>
               </ContentBlock>
               <div className="space-y-3">
                 {questions.map((q, i) => (
