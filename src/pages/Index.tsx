@@ -35,9 +35,19 @@ export default function Dashboard() {
   const { getSubjectProgress, getOverallProgress } = useStudyProgress();
   const [quote, setQuote] = useState("");
   const [daysLeft, setDaysLeft] = useState(getDaysRemaining());
+  const [quoteIndex, setQuoteIndex] = useState(0);
+
+  const refreshQuote = () => {
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * motivationalQuotes.length);
+    } while (newIndex === quoteIndex && motivationalQuotes.length > 1);
+    setQuoteIndex(newIndex);
+    setQuote(motivationalQuotes[newIndex]);
+  };
 
   useEffect(() => {
-    setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
+    refreshQuote();
     const timer = setInterval(() => setDaysLeft(getDaysRemaining()), 60000);
     return () => clearInterval(timer);
   }, []);
