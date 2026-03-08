@@ -223,23 +223,44 @@ export default function ContentPage() {
         {section === "notes" && (() => {
           const chapterContent = getChapterContent(subjectId!, chapter.id);
           if (chapterContent) {
+            const topicWiseNotes = buildTopicWiseFiveMarkNotes(chapterContent, chapter.name);
+
             return (
-              <div className="glass rounded-xl p-5 space-y-4">
-                <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed
-                  prose-headings:text-foreground prose-headings:font-display
-                  prose-h2:text-base prose-h2:mt-6 prose-h2:mb-2
-                  prose-h3:text-sm prose-h3:mt-4 prose-h3:mb-1
-                  prose-strong:text-foreground
-                  prose-li:my-0.5
-                  prose-p:my-2
-                  prose-table:text-xs
-                  prose-th:text-foreground prose-th:bg-muted/50 prose-th:px-3 prose-th:py-2
-                  prose-td:px-3 prose-td:py-1.5 prose-td:border-border
-                  prose-blockquote:border-primary prose-blockquote:text-muted-foreground
-                  prose-code:bg-muted prose-code:px-1 prose-code:rounded prose-code:text-xs
-                ">
-                  <ReactMarkdown>{chapterContent.notes}</ReactMarkdown>
-                </div>
+              <div className="space-y-4">
+                <ContentBlock title="Topic-wise 5-Mark Notes" icon={<FileText className="w-5 h-5 text-primary" />}>
+                  <p>Every topic is organized in board-answer format so you can directly prepare 5-mark responses.</p>
+                </ContentBlock>
+
+                {topicWiseNotes.map((topicNote, index) => (
+                  <div key={`${topicNote.title}-${index}`} className="glass rounded-xl p-5 space-y-3">
+                    <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed
+                      prose-headings:text-foreground prose-headings:font-display
+                      prose-h2:text-base prose-h2:mt-0 prose-h2:mb-2 prose-h2:font-bold
+                      prose-h3:text-sm prose-h3:mt-4 prose-h3:mb-1 prose-h3:font-semibold
+                      prose-strong:text-foreground
+                      prose-li:my-1
+                      prose-p:my-2
+                    ">
+                      <ReactMarkdown>{topicNote.markdown}</ReactMarkdown>
+                    </div>
+                  </div>
+                ))}
+
+                {chapterContent.notes && (
+                  <details className="glass rounded-xl p-5 group">
+                    <summary className="text-sm text-primary cursor-pointer font-medium">Open quick chapter snapshot</summary>
+                    <div className="mt-3 prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed
+                      prose-headings:text-foreground prose-headings:font-display
+                      prose-h2:text-base prose-h2:mt-4 prose-h2:mb-2
+                      prose-h3:text-sm prose-h3:mt-3 prose-h3:mb-1
+                      prose-strong:text-foreground
+                      prose-li:my-1
+                      prose-p:my-2
+                    ">
+                      <ReactMarkdown>{chapterContent.notes}</ReactMarkdown>
+                    </div>
+                  </details>
+                )}
               </div>
             );
           }
@@ -248,39 +269,16 @@ export default function ContentPage() {
               subject={subject.name}
               chapter={chapter.name}
               cacheKey={`notes-${subjectId}-${chapter.name}`}
-              prompt={`You are an expert CBSE Class 12 ${subject.name} teacher. Write comprehensive, topper-level notes for the chapter "${chapter.name}".
+              prompt={`You are an expert CBSE Class 12 ${subject.name} teacher. Write topper-level notes for the chapter "${chapter.name}" in strict topic-wise format.
 
-These notes must be MORE detailed than NCERT. Structure them as:
+Rules:
+- Divide notes into clear topic sections
+- For each topic, provide a complete 5-mark answer structure
+- Use bold headings and subheadings
+- Include definition, explanation, key points, keywords, and conclusion for each topic
+- Keep language exam-ready and scoring focused
 
-## Chapter Overview
-Brief overview of "${chapter.name}" — what it covers, why it matters, and its board exam weightage.
-
-## Key Definitions (Exam-Ready)
-List every important definition from this chapter using exact CBSE-prescribed language. **Bold** the key terms examiners look for.
-
-## Detailed Concept Explanation
-For each concept in "${chapter.name}":
-- Explain it deeply with reasoning
-- Include step-by-step derivations where applicable
-- Add solved examples after each concept
-- Mention related formulas in **bold**
-
-## Important Diagrams
-Describe all important diagrams with labels, axes, and key points marked.
-
-## Board Exam Important Points
-- High-weightage areas
-- Frequently asked question types (2015-2025 pattern)
-- Mark distribution analysis
-
-## Answer Writing Tips
-- How to write 2-mark, 3-mark, and 5-mark answers for this chapter
-- Presentation tips and scoring keywords
-
-## Previous Year Board Analysis
-Most repeated questions and patterns from this chapter.
-
-Use markdown with ## and ### headings, **bold** for key terms, bullet points, and numbered steps. Be thorough — these notes should replace a textbook.`}
+Use markdown with ## and ### headings, **bold** text, bullet points, and numbered structure.`}
             />
           );
         })()}
