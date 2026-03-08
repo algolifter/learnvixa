@@ -124,6 +124,52 @@ function getRevisionContent(chapterName: string) {
   };
 }
 
+function stripMarkdown(markdown: string): string {
+  return markdown
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[[^\]]+\]\([^)]*\)/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/^>\s?/gm, "")
+    .replace(/\|/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildTopicWiseFiveMarkNotes(chapterContent: ChapterContent, chapterName: string) {
+  return chapterContent.topics.map((topic, index) => {
+    const cleanText = stripMarkdown(topic.content);
+    const sentences = cleanText
+      .split(/(?<=[.!?])\s+/)
+      .map((sentence) => sentence.trim())
+      .filter((sentence) => sentence.length > 20);
+
+    const intro = sentences[0] ?? `${topic.title} is a key concept from ${chapterName}.`;
+    const explanation = sentences[1] ?? `Explain the core idea of ${topic.title} with proper logic and sequence.`;
+    const corePoints = (sentences.slice(2, 7).length ? sentences.slice(2, 7) : sentences.slice(0, 5)).slice(0, 5);
+    const conclusion = sentences[sentences.length - 1] ?? `End with the exam relevance or application of ${topic.title}.`;
+
+    const keywords = [topic.title, chapterName, "definition", "diagram", "application"]
+      .filter(Boolean)
+      .map((word) => `**${word}**`)
+      .join(", ");
+
+    const keyPointList = corePoints.length
+      ? corePoints.map((point) => `- ${point}`).join("\n")
+      : "- Write one clear definition\n- Add one diagram/example\n- Mention one formula or key argument\n- Add one practical implication\n- Conclude with exam language";
+
+    const answerMarkdown = `## **Topic ${index + 1}: ${topic.title}**\n\n### **5-Mark Answer Structure**\n\n**1) Intro / Definition:** ${intro}\n\n**2) Core Explanation:** ${explanation}\n\n**3) Key Points to Include:**\n${keyPointList}\n\n**4) Scoring Keywords:** ${keywords}\n\n**5) Conclusion / Exam Closing Line:** ${conclusion}`;
+
+    return {
+      title: topic.title,
+      markdown: answerMarkdown,
+    };
+  });
+}
+
 export default function ContentPage() {
   const { subjectId, chapterId, section } = useParams<{ subjectId: string; chapterId: string; section: string }>();
   const navigate = useNavigate();
