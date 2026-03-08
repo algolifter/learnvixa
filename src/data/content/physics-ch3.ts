@@ -208,5 +208,80 @@ Where R = external resistance, l₁ = balancing length with key open, l₂ = wit
 - Null method: draws no current at balance
 - Compare EMFs: ε₁/ε₂ = l₁/l₂
 - Internal resistance: r = R(l₁/l₂ – 1)
-- Superior to voltmeter: measures true EMF`
+- Superior to voltmeter: measures true EMF`,
+  importantPoints: [
+    "**Current I = nAv_de** — drift velocity is very small (~10⁻⁴ m/s) but signal travels at speed of light",
+    "**Ohm's Law**: V = IR; R = ρl/A. Resistivity is material property, resistance depends on geometry",
+    "**Temperature dependence**: Conductors ρ↑ with T; Semiconductors ρ↓ with T",
+    "**Series**: R = R₁+R₂; same current. **Parallel**: 1/R = 1/R₁+1/R₂; same voltage",
+    "**Internal resistance**: V = ε − Ir; terminal voltage < EMF when current flows",
+    "**KCL**: ΣI_in = ΣI_out (charge conservation). **KVL**: ΣV = 0 around any loop (energy conservation)",
+    "**Wheatstone bridge**: P/Q = R/S when balanced (no galvanometer current)",
+    "**Potentiometer**: Null method, draws no current; ε₁/ε₂ = l₁/l₂; measures TRUE EMF"
+  ],
+  commonMistakes: [
+    "**Confusing EMF with terminal voltage**: EMF is max potential difference (no current); V = ε − Ir when current flows",
+    "**Resistor vs Capacitor combinations**: Resistors in series ADD directly; capacitors in series add RECIPROCALLY (opposite!)",
+    "**Sign convention in KVL**: Going through battery from − to + is a RISE (+ε); through resistor in current direction is a DROP (−IR)",
+    "**Metre bridge end corrections**: Not accounting for resistance of thick copper strips at ends",
+    "**Potentiometer**: The driving EMF must be GREATER than the EMF being measured, otherwise no balance point exists"
+  ],
+  examStrategy: [
+    "**5-mark**: Derive drift velocity expression and show V=IR; Wheatstone bridge derivation; Potentiometer for comparing EMFs",
+    "**3-mark numericals**: Kirchhoff's laws to solve circuits; metre bridge calculations; internal resistance problems",
+    "**2-mark**: Define drift velocity, current density, resistivity; State Kirchhoff's laws; Potentiometer vs voltmeter",
+    "**Practice**: At least 10 Kirchhoff's law circuit problems — this is the most numerically intensive chapter"
+  ],
+  examples: [
+    "**Drift velocity**: Cu wire, I=1.5A, A=10⁻⁶m², n=8.5×10²⁸/m³. v_d = I/(nAe) = 1.5/(8.5×10²⁸×10⁻⁶×1.6×10⁻¹⁹) = **1.1×10⁻⁴ m/s**",
+    "**Resistance**: Wire l=2m, A=0.5mm²=5×10⁻⁷m², ρ=1.7×10⁻⁸Ωm. R = ρl/A = 1.7×10⁻⁸×2/(5×10⁻⁷) = **0.068 Ω**",
+    "**Internal resistance**: Cell ε=2V, r=0.5Ω, R=4.5Ω. I = ε/(R+r) = 2/5 = 0.4A. V = ε−Ir = 2−0.2 = **1.8V**",
+    "**Wheatstone bridge**: P=100Ω, Q=200Ω, R=150Ω. For balance: S = QR/P = 200×150/100 = **300Ω**",
+    "**Potentiometer**: l₁=75cm for ε₁, l₂=50cm for ε₂. ε₁/ε₂ = 75/50 = **3:2**"
+  ],
+  summary: "**Current Electricity** deals with charges in motion through conductors.\n\n**Key Concepts**: (1) I = nAv_de; drift velocity ~10⁻⁴ m/s. (2) Ohm's law V=IR; R=ρl/A. (3) Series R adds, parallel 1/R adds. (4) Kirchhoff's laws for complex circuits. (5) Wheatstone bridge: P/Q=R/S. (6) Potentiometer: null method for true EMF.\n\n**Board Weightage**: 8-10 marks. Heavy on numericals — practice Kirchhoff's law and combination circuits extensively.",
+  questions2: [
+    { question: "Define drift velocity of electrons.", answer: "Drift velocity is the average velocity acquired by free electrons in a conductor in the direction opposite to the applied electric field. v_d = eEτ/m, where τ is relaxation time. It is very small (~10⁻⁴ m/s)." },
+    { question: "State Kirchhoff's junction rule.", answer: "At any junction in a circuit, the algebraic sum of currents is zero, i.e., the sum of currents entering the junction equals the sum of currents leaving it. ΣI = 0. It is based on conservation of charge." },
+    { question: "Why is a potentiometer preferred over a voltmeter for measuring EMF?", answer: "A potentiometer draws no current from the cell at the balance point (null method), so it measures the true EMF. A voltmeter draws some current, so it measures terminal voltage which is less than EMF." },
+    { question: "Define resistivity. How does it depend on temperature for conductors?", answer: "Resistivity (ρ) is the resistance of a conductor of unit length and unit cross-sectional area. SI unit: Ω·m. For conductors, ρ increases with temperature: ρ_T = ρ₀(1 + αT), because increased lattice vibrations scatter electrons more." },
+    { question: "What is a Wheatstone bridge? When is it said to be balanced?", answer: "A Wheatstone bridge is an arrangement of four resistances P, Q, R, S in a diamond shape with a galvanometer across one diagonal. It is balanced when P/Q = R/S, at which point no current flows through the galvanometer." },
+    { question: "A wire of resistance R is stretched to double its length. What is its new resistance?", answer: "Volume remains constant: Al = A'(2l), so A' = A/2. New R' = ρ(2l)/(A/2) = 4ρl/A = 4R. The resistance becomes 4 times." }
+  ],
+  questions3: [
+    { question: "Derive the expression for drift velocity and show that V = IR.", answer: "In a conductor with field E, force on electron = eE.\nAcceleration a = eE/m.\nBetween collisions, electron gains velocity = aτ = eEτ/m.\nThis average velocity is drift velocity: v_d = eEτ/m\n\nCurrent I = nAv_de = nAe(eEτ/m) = (ne²τ/m)AE\nSince E = V/l: I = (ne²τ/m)(A/l)V\n\nComparing with I = V/R: R = ml/(nAe²τ) = ρl/A\nwhere ρ = m/(ne²τ)\n\nThus V = IR (Ohm's law)." },
+    { question: "Two cells of EMFs 1.5V and 2V with internal resistances 0.5Ω and 0.3Ω are connected in parallel. Find the equivalent EMF and internal resistance.", answer: "For parallel cells:\nε_eq = (ε₁/r₁ + ε₂/r₂)/(1/r₁ + 1/r₂)\nε_eq = (1.5/0.5 + 2/0.3)/(1/0.5 + 1/0.3)\nε_eq = (3 + 6.67)/(2 + 3.33)\nε_eq = 9.67/5.33 = **1.81 V**\n\n1/r_eq = 1/r₁ + 1/r₂ = 1/0.5 + 1/0.3 = 2 + 3.33 = 5.33\nr_eq = 1/5.33 = **0.188 Ω**" },
+    { question: "In a metre bridge, the balance point is at 39.5 cm from end A with resistance 10Ω in the left gap. Find the unknown resistance.", answer: "Using metre bridge formula:\nR/S = l/(100−l)\n10/S = 39.5/60.5\nS = 10 × 60.5/39.5\nS = 605/39.5 = **15.32 Ω**" }
+  ],
+  questions5: [
+    { question: "State Kirchhoff's laws. Using them, derive the balanced condition for a Wheatstone bridge.", answer: "**Kirchhoff's First Law (KCL)**: At any junction, ΣI = 0 (sum of currents entering = sum leaving). Based on conservation of charge.\n\n**Kirchhoff's Second Law (KVL)**: In any closed loop, ΣV = 0 (sum of potential differences = 0). Based on conservation of energy.\n\n**Wheatstone Bridge Derivation**:\nFour resistances P, Q, R, S arranged in a diamond. Galvanometer G connects B and D.\n\nApply KCL at B: I₁ = I_g + I₃ ... (i)\nApply KCL at D: I₂ + I_g = I₄ ... (ii)\n\nAt balance: I_g = 0\nSo I₁ = I₃ and I₂ = I₄\n\nApply KVL to loop ABDA:\nI₁P − I₂R = 0 → I₁P = I₂R ... (iii)\n\nApply KVL to loop BCDB:\nI₁Q − I₂S = 0 → I₁Q = I₂S ... (iv)\n\nDivide (iii) by (iv):\nP/Q = R/S\n\nThis is the **balanced condition** of the Wheatstone bridge." },
+    { question: "Explain the principle, construction, and working of a potentiometer. How is it used to (i) compare EMFs of two cells, and (ii) find internal resistance of a cell?", answer: "**Principle**: When a constant current flows through a wire of uniform cross-section, the potential drop across any length is proportional to that length. V ∝ l.\n\n**Construction**: A long uniform wire AB (usually 10m) connected to a battery (driver cell) with EMF > EMFs being measured. A jockey slides along the wire to find balance point.\n\n**(i) Comparing EMFs**:\n- Connect cell ε₁, find balance length l₁ → ε₁ = kl₁\n- Connect cell ε₂, find balance length l₂ → ε₂ = kl₂\n- ε₁/ε₂ = l₁/l₂\n\n**(ii) Internal resistance**:\n- Connect cell with key K open: balance at l₁ → ε = kl₁\n- Close K (external resistance R): balance at l₂ → V = kl₂\n- Since ε = V + Ir → r = R(ε/V − 1) = R(l₁/l₂ − 1)\n\n**Advantage**: At balance, no current is drawn from the test cell → measures TRUE EMF." }
+  ],
+  revision: {
+    quickPoints: [
+      "**I = nAv_de**; drift velocity ~10⁻⁴ m/s; signal speed ≈ c",
+      "**V = IR**; R = ρl/A; ρ is material property",
+      "**Conductors**: ρ↑ with T. **Semiconductors**: ρ↓ with T",
+      "**Series**: R adds, I same. **Parallel**: 1/R adds, V same",
+      "**V = ε − Ir** (terminal voltage < EMF when current flows)",
+      "**KCL**: ΣI = 0 at junction. **KVL**: ΣV = 0 in loop",
+      "**Wheatstone**: P/Q = R/S at balance. **Metre bridge**: R/S = l/(100−l)",
+      "**Potentiometer**: ε₁/ε₂ = l₁/l₂; r = R(l₁/l₂ − 1)"
+    ],
+    formulas: [
+      "I = Q/t = nAv_de",
+      "v_d = eEτ/m",
+      "R = ρl/A; ρ_T = ρ₀(1+αT)",
+      "V = ε − Ir",
+      "Series: R = R₁+R₂; Parallel: 1/R = 1/R₁+1/R₂",
+      "P/Q = R/S (Wheatstone balance)",
+      "ε₁/ε₂ = l₁/l₂ (potentiometer)",
+      "r = R(l₁/l₂ − 1)"
+    ],
+    tipsAndTricks: [
+      "For Kirchhoff problems: assign current directions first, apply KCL at each junction, then KVL for each loop",
+      "Stretched wire: if length becomes n times, R becomes n² times (volume constant)",
+      "Metre bridge: balance near 50cm mark gives most accurate results"
+    ]
+  }
 };
