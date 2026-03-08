@@ -7,7 +7,7 @@ import AITeacherPanel from "@/components/AITeacherPanel";
 import TopicHub from "@/components/TopicHub";
 import AIExplainer from "@/components/AIExplainer";
 import ReactMarkdown from "react-markdown";
-import { getChapterContent } from "@/data/content";
+import { getChapterContent, type ChapterContent } from "@/data/content";
 
 // Rich content generator based on chapter context (used for questions & revision)
 function getTopicsContent(subjectId: string, chapterName: string) {
