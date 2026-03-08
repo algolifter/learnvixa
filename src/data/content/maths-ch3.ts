@@ -88,5 +88,20 @@ A is invertible if and only if |A| ≠ 0 (non-singular).
 ## 2. A = (A+Aᵀ)/2 + (A–Aᵀ)/2 (symmetric + skew-symmetric)
 ## 3. Multiplication: not commutative; (AB)ᵀ = BᵀAᵀ
 ## 4. Inverse: exists iff |A| ≠ 0; (AB)⁻¹ = B⁻¹A⁻¹
-## 5. Elementary operations: interchange, multiply, add multiple`
+## 5. Elementary operations: interchange, multiply, add multiple`,
+  questions2: [
+    { question: "If A is a 3×2 matrix and B is a 2×4 matrix, what is the order of AB?", answer: "AB is defined because columns of A (2) = rows of B (2). Order of AB = **3×4** (rows of A × columns of B). BA is NOT defined because columns of B (4) ≠ rows of A (3)." },
+    { question: "What is a symmetric matrix? Give an example.", answer: "A square matrix A is **symmetric** if **A = Aᵀ** (i.e., aᵢⱼ = aⱼᵢ for all i, j). Example: A = [[1, 2], [2, 3]] — here A = Aᵀ. Elements are symmetric about the main diagonal." },
+    { question: "Express any square matrix as sum of symmetric and skew-symmetric matrices.", answer: "Any square matrix A can be written as: **A = ½(A + Aᵀ) + ½(A − Aᵀ)**, where ½(A + Aᵀ) is **symmetric** and ½(A − Aᵀ) is **skew-symmetric**. This decomposition is unique." },
+    { question: "If A = [[1, 2], [3, 4]], find A².", answer: "A² = A × A = [[1×1+2×3, 1×2+2×4], [3×1+4×3, 3×2+4×4]] = [[1+6, 2+8], [3+12, 6+16]] = **[[7, 10], [15, 22]]**." },
+    { question: "What is a scalar matrix?", answer: "A **scalar matrix** is a diagonal matrix in which all diagonal elements are **equal**: kI, where k is a scalar and I is the identity matrix. Example: [[3, 0], [0, 3]] = 3I₂. When k = 1, it becomes the identity matrix." }
+  ],
+  questions3: [
+    { question: "Prove that (AB)ᵀ = BᵀAᵀ.", answer: "Let A = [aᵢⱼ]ₘₓₙ and B = [bⱼₖ]ₙₓₚ. Then AB = [cᵢₖ]ₘₓₚ where cᵢₖ = Σⱼ aᵢⱼbⱼₖ.\n\n(AB)ᵀ has (k,i) element = cᵢₖ = Σⱼ aᵢⱼbⱼₖ\n\nBᵀAᵀ: (Bᵀ)ₖⱼ = bⱼₖ and (Aᵀ)ⱼᵢ = aᵢⱼ\n\n(BᵀAᵀ)ₖᵢ = Σⱼ (Bᵀ)ₖⱼ(Aᵀ)ⱼᵢ = Σⱼ bⱼₖ·aᵢⱼ = Σⱼ aᵢⱼbⱼₖ = cᵢₖ\n\nSince elements match: **(AB)ᵀ = BᵀAᵀ**. This is the **reversal law for transposes**." },
+    { question: "Find the inverse of A = [[2, 3], [1, 2]] using elementary operations.", answer: "Write [A | I]: [[2, 3 | 1, 0], [1, 2 | 0, 1]]\n\nR₁ ↔ R₂: [[1, 2 | 0, 1], [2, 3 | 1, 0]]\n\nR₂ → R₂ − 2R₁: [[1, 2 | 0, 1], [0, −1 | 1, −2]]\n\nR₂ → −R₂: [[1, 2 | 0, 1], [0, 1 | −1, 2]]\n\nR₁ → R₁ − 2R₂: [[1, 0 | 2, −3], [0, 1 | −1, 2]]\n\n**A⁻¹ = [[2, −3], [−1, 2]]**\n\nVerification: AA⁻¹ = [[2×2+3×(−1), 2×(−3)+3×2], [1×2+2×(−1), 1×(−3)+2×2]] = [[1, 0], [0, 1]] = I ✓" },
+    { question: "Prove that for a skew-symmetric matrix, all diagonal elements are zero.", answer: "For a skew-symmetric matrix A: **Aᵀ = −A**, which means aⱼᵢ = −aᵢⱼ for all i, j.\n\nFor diagonal elements, put i = j:\naᵢᵢ = −aᵢᵢ\n2aᵢᵢ = 0\naᵢᵢ = 0\n\nTherefore **all diagonal elements of a skew-symmetric matrix are zero**.\n\nConsequence: trace of a skew-symmetric matrix = 0. Also, determinant of an odd-order skew-symmetric matrix = 0." }
+  ],
+  questions5: [
+    { question: "Define types of matrices. Prove that any square matrix can be uniquely expressed as the sum of a symmetric and a skew-symmetric matrix.", answer: "**Types of Matrices**:\n1. **Row matrix**: 1×n; **Column matrix**: m×1\n2. **Square matrix**: m = n; **Diagonal**: aᵢⱼ = 0 for i ≠ j\n3. **Scalar**: kI; **Identity**: diagonal elements = 1\n4. **Symmetric**: A = Aᵀ; **Skew-symmetric**: A = −Aᵀ\n5. **Zero matrix**: all elements 0\n\n**Proof of Decomposition**:\nFor any square matrix A, define:\nP = ½(A + Aᵀ) and Q = ½(A − Aᵀ)\n\n**P is symmetric**: Pᵀ = ½(A + Aᵀ)ᵀ = ½(Aᵀ + A) = P ✓\n\n**Q is skew-symmetric**: Qᵀ = ½(A − Aᵀ)ᵀ = ½(Aᵀ − A) = −½(A − Aᵀ) = −Q ✓\n\n**P + Q = ½(A + Aᵀ) + ½(A − Aᵀ) = A** ✓\n\n**Uniqueness**: Suppose A = P₁ + Q₁ = P₂ + Q₂. Then P₁ − P₂ = Q₂ − Q₁. LHS is symmetric, RHS is skew-symmetric. A matrix that is both symmetric and skew-symmetric must be the zero matrix. So P₁ = P₂ and Q₁ = Q₂." }
+  ]
 };

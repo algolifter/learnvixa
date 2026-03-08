@@ -64,5 +64,19 @@ Used for powers of sin and cos — reduces the integral step by step.
 ## 2. Methods: substitution, by parts (ILATE), partial fractions
 ## 3. Special: ∫eˣ[f(x)+f'(x)]dx = eˣf(x)
 ## 4. Definite: F(b)–F(a); King's rule: ∫₀ᵃf(x)dx = ∫₀ᵃf(a–x)dx
-## 5. Even/odd function properties for symmetric limits`
+## 5. Even/odd function properties for symmetric limits`,
+  questions2: [
+    { question: "Evaluate ∫(x² + 1)dx.", answer: "∫(x² + 1)dx = x³/3 + x + C, where C is the constant of integration." },
+    { question: "Evaluate ∫₀^π sinx dx.", answer: "∫₀^π sinx dx = [−cosx]₀^π = −cosπ − (−cos0) = −(−1) − (−1) = 1 + 1 = **2**." },
+    { question: "State the ILATE rule for integration by parts.", answer: "**ILATE** is the order of priority for choosing the first function in ∫u·v dx = u∫v dx − ∫(u'∫v dx)dx: **I**nverse trig > **L**ogarithmic > **A**lgebraic > **T**rigonometric > **E**xponential. The function appearing first in ILATE is taken as 'u'." },
+    { question: "Evaluate ∫eˣ(sinx + cosx)dx.", answer: "Using the property ∫eˣ[f(x) + f'(x)]dx = eˣf(x) + C:\n\nHere f(x) = sinx, f'(x) = cosx.\n\nSo ∫eˣ(sinx + cosx)dx = **eˣsinx + C**." }
+  ],
+  questions3: [
+    { question: "Evaluate ∫dx/(x² + 4x + 13).", answer: "Complete the square: x² + 4x + 13 = (x+2)² + 9 = (x+2)² + 3²\n\nLet t = x + 2, dt = dx\n\n∫dt/(t² + 3²) = (1/3)tan⁻¹(t/3) + C\n\n= **(1/3)tan⁻¹((x+2)/3) + C**" },
+    { question: "Evaluate ∫₀^(π/2) log(sinx) dx.", answer: "Let I = ∫₀^(π/2) log(sinx)dx\n\nUsing King's property: I = ∫₀^(π/2) log(cosx)dx\n\n2I = ∫₀^(π/2) [log(sinx) + log(cosx)]dx = ∫₀^(π/2) log(sinx·cosx)dx\n\n= ∫₀^(π/2) log(sin2x/2)dx = ∫₀^(π/2) log(sin2x)dx − ∫₀^(π/2) log2 dx\n\nLet 2x = t: first integral = (1/2)∫₀^π log(sint)dt = (1/2)·2I = I\n\nSo 2I = I − (π/2)log2\n\n**I = −(π/2)log2**" },
+    { question: "Evaluate ∫x²eˣ dx using integration by parts.", answer: "Using ILATE: u = x², dv = eˣdx\n\n∫x²eˣdx = x²eˣ − ∫2xeˣdx\n\nAgain by parts: ∫2xeˣdx = 2xeˣ − ∫2eˣdx = 2xeˣ − 2eˣ\n\nSo: ∫x²eˣdx = x²eˣ − 2xeˣ + 2eˣ + C = **eˣ(x² − 2x + 2) + C**" }
+  ],
+  questions5: [
+    { question: "Evaluate ∫dx/(sinx + sin2x). Also state the methods of integration used.", answer: "∫dx/(sinx + 2sinxcosx) = ∫dx/(sinx(1 + 2cosx))\n\nMultiply numerator and denominator by sinx:\n∫sinx dx/(sin²x(1+2cosx)) = ∫sinx dx/((1−cos²x)(1+2cosx))\n\nLet cosx = t, −sinx dx = dt:\n\n= −∫dt/((1−t²)(1+2t)) = −∫dt/((1−t)(1+t)(1+2t))\n\n**Partial fractions**: 1/((1−t)(1+t)(1+2t)) = A/(1−t) + B/(1+t) + C/(1+2t)\n\nSolving: A = 1/6, B = −1/2, C = 4/3\n\n= −[1/6·(−ln|1−t|) − 1/2·ln|1+t| + 4/3·(1/2)ln|1+2t|] + C\n\n= **(1/6)ln|1−cosx| − (1/2)ln|1+cosx| + (2/3)ln|1+2cosx| + C**\n\n**Methods used**: (1) Trigonometric identity, (2) Substitution (cosx = t), (3) Partial fraction decomposition, (4) Standard logarithmic integrals." }
+  ]
 };
