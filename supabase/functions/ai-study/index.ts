@@ -30,6 +30,8 @@ Your explanation style:
 - Use bullet points for clarity
 - Keep tone encouraging and exam-focused
 - If the topic involves math/physics, show derivations step by step
+- Use LaTeX for ALL mathematical equations, expressions, and symbols.
+- ALWAYS wrap inline math with single $ signs (e.g., $E=mc^2$) and block math with double $$ signs.
 - Mention mark weightage and question patterns from CBSE boards`;
     } else {
       // Chatbot / doubt solving mode
