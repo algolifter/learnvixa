@@ -107,7 +107,7 @@ export default function AIChatbot() {
                   <p>Hi! I'm your AI study assistant.</p>
                   <p>Ask me any doubt from Maths, Physics, Chemistry or English.</p>
                   <div className="flex flex-wrap gap-1.5 justify-center mt-3">
-                    {["Explain Matrices", "Solve F=ma problem", "What is Electrochemistry?", "Summarize The Last Lesson"].map((q) => (
+                    {["Explain Matrices", "Draw a plant cell", "What is Electrochemistry?", "Summarize The Last Lesson"].map((q) => (
                       <button
                         key={q}
                         onClick={() => { setInput(q); }}

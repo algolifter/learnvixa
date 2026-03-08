@@ -37,6 +37,17 @@ export async function streamAI({
       onError(data.error || `Error ${resp.status}`);
       return;
     }
+    const contentType = resp.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await resp.json();
+      if (data.image) {
+        onDelta(`![Generated Image](${data.image})\n\n${data.text || ""}`);
+      } else if (data.text) {
+        onDelta(data.text);
+      }
+      onDone();
+      return;
+    }
 
     if (!resp.body) {
       onError("No response stream");
