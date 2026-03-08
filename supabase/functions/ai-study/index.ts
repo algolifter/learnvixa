@@ -51,6 +51,43 @@ Your capabilities:
 - If asked about a specific chapter, provide board-exam relevant content
 - Always mention if a topic is high-weightage for boards`;
     }
+    const lastMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
+    const isImageRequest = /generate.*image|create.*image|draw\s|show.*image|picture of/i.test(lastMessage);
+
+    if (isImageRequest) {
+      const imgResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-image",
+          messages: [
+            { role: "user", content: messages[messages.length - 1].content }
+          ],
+          modalities: ["image", "text"]
+        }),
+      });
+
+      if (!imgResponse.ok) {
+        const t = await imgResponse.text();
+        console.error("Image gen error:", imgResponse.status, t);
+        return new Response(JSON.stringify({ error: "Image generation failed." }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const data = await imgResponse.json();
+      const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+      const text = data.choices?.[0]?.message?.content || "";
+
+      return new Response(JSON.stringify({ image: imageUrl, text }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
