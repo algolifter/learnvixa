@@ -9,13 +9,6 @@ import AIExplainer from "@/components/AIExplainer";
 import ReactMarkdown from "react-markdown";
 import { getChapterContent, type ChapterContent } from "@/data/content";
 
-// Rich content generator based on chapter context (used for questions & revision)
-function getTopicsContent(subjectId: string, chapterName: string) {
-  return {
-    introduction: `This chapter covers the fundamental concepts of **${chapterName}** as prescribed by CBSE Class 12.`,
-  };
-}
-
 function generateQuestions(marks: number, chapterName: string, count: number) {
   const templates = {
     2: [
