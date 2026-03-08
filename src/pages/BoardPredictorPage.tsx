@@ -20,7 +20,7 @@ export default function BoardPredictorPage() {
   const chapter = subject.chapters.find((c) => c.id === selChapter);
   const [filter, setFilter] = useState<string>("all");
 
-  const questions = chapter ? generateQuestions(selSubject, chapter.name) : [];
+  const questions = chapter ? getBoardPredictorQuestions(selSubject, selChapter) : [];
   const filtered = filter === "all" ? questions : questions.filter((q) => q.type === filter);
 
   return (

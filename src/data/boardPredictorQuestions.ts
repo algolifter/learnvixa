@@ -1,6 +1,3 @@
-import type { PredictedQuestion } from "./boardPredictorTypes";
-
-export type { PredictedQuestion };
 export type Probability = "High" | "Medium" | "Important";
 
 export interface PredictedQuestion {
