@@ -192,7 +192,6 @@ export default function ContentPage() {
     markSection(subjectId!, Number(chapterId), section as any);
   };
 
-  const topics = getTopicsContent(subjectId!, chapter.name);
   const revision = getRevisionContent(chapter.name);
 
   return (
