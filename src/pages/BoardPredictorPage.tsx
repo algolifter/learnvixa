@@ -3,65 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { subjects } from "@/data/subjects";
-
-type Probability = "High" | "Medium" | "Important";
-
-interface PredictedQuestion {
-  text: string;
-  marks: number;
-  probability: Probability;
-  type: "2mark" | "3mark" | "5mark" | "hots" | "assertion";
-}
-
-function generateQuestions(subjectId: string, chapterName: string): PredictedQuestion[] {
-  const qs: PredictedQuestion[] = [];
-  const probabilities: Probability[] = ["High", "Medium", "Important"];
-  const templates2 = [
-    `Define ${chapterName} with one example.`,
-    `State the main principle of ${chapterName}.`,
-    `Give two applications of concepts in ${chapterName}.`,
-    `Differentiate between the two key terms in ${chapterName}.`,
-    `Write the formula/equation related to ${chapterName} and define each term.`,
-    `Name the scientist associated with ${chapterName} and state their contribution.`,
-    `What is the SI unit of the quantity discussed in ${chapterName}?`,
-    `State one limitation of the theory in ${chapterName}.`,
-    `Give the conditions under which ${chapterName} concepts are applicable.`,
-    `Define the key term used in ${chapterName} as per CBSE syllabus.`,
-  ];
-  const templates3 = [
-    `Explain the fundamental concept of ${chapterName} with a diagram.`,
-    `Derive the main formula used in ${chapterName}.`,
-    `Compare and contrast two approaches discussed in ${chapterName}.`,
-    `Solve a numerical problem based on ${chapterName}.`,
-    `Explain the significance of ${chapterName} in real-world applications.`,
-    `Describe the experimental setup related to ${chapterName}.`,
-    `State and prove the main theorem/law in ${chapterName}.`,
-    `Explain the graphical representation used in ${chapterName}.`,
-    `What are the factors affecting the phenomenon in ${chapterName}?`,
-    `Describe the step-by-step process explained in ${chapterName}.`,
-  ];
-  const templates5 = [
-    `Derive the complete expression for the main concept in ${chapterName}. Draw a neat diagram and explain each step.`,
-    `Explain ${chapterName} comprehensively with derivation, diagram, and two solved examples.`,
-    `State the theory behind ${chapterName}. Derive the formula and solve a numerical problem based on it.`,
-    `Compare and contrast all methods/types discussed in ${chapterName} with examples and diagrams.`,
-    `Describe the complete experimental procedure of ${chapterName}. Include diagram, observations, and conclusion.`,
-    `Explain the applications of ${chapterName} in detail. Give at least three real-world examples.`,
-    `Prove the main theorem in ${chapterName} and discuss its significance with examples.`,
-    `Write detailed notes on ${chapterName} covering definitions, formulas, diagrams, and solved examples.`,
-    `Explain the entire concept of ${chapterName} as would appear in a 5-mark board question.`,
-    `Discuss the historical development and modern applications of ${chapterName}.`,
-  ];
-
-  templates2.forEach((t, i) => qs.push({ text: t, marks: 2, probability: probabilities[i % 3], type: "2mark" }));
-  templates3.forEach((t, i) => qs.push({ text: t, marks: 3, probability: probabilities[i % 3], type: "3mark" }));
-  templates5.forEach((t, i) => qs.push({ text: t, marks: 5, probability: probabilities[i % 3], type: "5mark" }));
-  qs.push({ text: `Assertion: The concept in ${chapterName} holds true under standard conditions.\nReason: It is derived from fundamental principles.\nSelect the correct option.`, marks: 1, probability: "High", type: "assertion" });
-  qs.push({ text: `HOTS: How would the results of ${chapterName} change if the boundary conditions are altered? Justify with reasoning.`, marks: 5, probability: "Medium", type: "hots" });
-  qs.push({ text: `HOTS: A student claims that ${chapterName} is not applicable in a certain case. Evaluate the claim and provide a counter-argument.`, marks: 5, probability: "High", type: "hots" });
-
-  return qs;
-}
+import { getBoardPredictorQuestions, type PredictedQuestion, type Probability } from "@/data/boardPredictorQuestions";
 
 const probColor: Record<Probability, string> = {
   High: "bg-accent/20 text-accent",
