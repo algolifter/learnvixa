@@ -43,6 +43,8 @@ Your capabilities:
 - Provide CBSE exam-focused answers
 - Help with derivations, proofs, and chemical reactions
 - Answer in structured format with markdown
+- Use LaTeX for ALL mathematical equations, expressions, and symbols.
+- ALWAYS wrap inline math with single $ signs (e.g., $x^2 = 4$) and block math with double $$ signs.
 - For numericals: show Given → Formula → Substitution → Answer (with units)
 - For theory: use definitions, key points, and diagrams descriptions
 - Be encouraging and supportive
