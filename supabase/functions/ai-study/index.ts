@@ -62,7 +62,7 @@ Your capabilities:
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash-image",
+          model: "google/gemini-3-pro-image-preview",
           messages: [
             { role: "user", content: messages[messages.length - 1].content }
           ],
@@ -80,8 +80,17 @@ Your capabilities:
       }
 
       const data = await imgResponse.json();
+      console.log("Image generation response:", JSON.stringify(data).substring(0, 500));
       const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
       const text = data.choices?.[0]?.message?.content || "";
+
+      if (!imageUrl) {
+        console.error("No image URL in response");
+        return new Response(JSON.stringify({ error: "No image generated" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
 
       return new Response(JSON.stringify({ image: imageUrl, text }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

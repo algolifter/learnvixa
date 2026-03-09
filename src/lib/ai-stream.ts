@@ -40,8 +40,16 @@ export async function streamAI({
     const contentType = resp.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       const data = await resp.json();
+      if (data.error) {
+        onError(data.error);
+        return;
+      }
       if (data.image) {
-        onDelta(`![Generated Image](${data.image})\n\n${data.text || ""}`);
+        // Display the image and any accompanying text
+        onDelta(`![Generated Image](${data.image})`);
+        if (data.text) {
+          onDelta(`\n\n${data.text}`);
+        }
       } else if (data.text) {
         onDelta(data.text);
       }
