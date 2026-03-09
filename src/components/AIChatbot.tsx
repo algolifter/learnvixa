@@ -103,7 +103,7 @@ export default function AIChatbot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-hide">
+            <div ref={scrollAreaRef} className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-hide">
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground text-xs mt-8 space-y-2">
                   <p className="text-2xl">🤖</p>
