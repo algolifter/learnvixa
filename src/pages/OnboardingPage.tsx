@@ -10,7 +10,7 @@ interface Props {
 
 const fadeSlide = {
   initial: { opacity: 0, x: 40 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const } },
   exit: { opacity: 0, x: -40, transition: { duration: 0.3 } },
 };
 
