@@ -20,8 +20,8 @@ const container = {
   show: { transition: { staggerChildren: 0.07 } },
 };
 const item = {
-  hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
 const subjectColors: Record<string, string> = {
