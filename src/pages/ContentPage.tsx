@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { getSubject, getChapter } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
@@ -6,6 +7,7 @@ import { ArrowLeft, CheckCircle2, Sparkles, AlertTriangle, Lightbulb, BookOpen, 
 import AITeacherPanel from "@/components/AITeacherPanel";
 import TopicHub from "@/components/TopicHub";
 import AIExplainer from "@/components/AIExplainer";
+import { useContinueStudying } from "@/hooks/useContinueStudying";
 import ReactMarkdown from "react-markdown";
 import { getChapterContent, type ChapterContent } from "@/data/content";
 
@@ -167,8 +169,23 @@ export default function ContentPage() {
   const { subjectId, chapterId, section } = useParams<{ subjectId: string; chapterId: string; section: string }>();
   const navigate = useNavigate();
   const { markSection } = useStudyProgress();
+  const { recordStudy } = useContinueStudying();
   const subject = getSubject(subjectId || "");
   const chapter = getChapter(subjectId || "", Number(chapterId));
+
+  // Record this as the last studied item
+  useEffect(() => {
+    if (subject && chapter && section) {
+      recordStudy({
+        subjectId: subject.id,
+        subjectName: subject.name,
+        subjectIcon: subject.icon,
+        chapterId: chapter.id,
+        chapterName: chapter.name,
+        section,
+      });
+    }
+  }, [subject?.id, chapter?.id, section]);
 
   if (!subject || !chapter || !section) return <div className="min-h-screen flex items-center justify-center">Not found</div>;
 
