@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface UserProfile {
   name: string;
+  email: string;
   category: string;
   examId?: string;
   classLevel?: string;
