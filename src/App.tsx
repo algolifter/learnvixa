@@ -47,7 +47,8 @@ function AppContent() {
         <Route path="/calm" element={<CalmMode />} />
         <Route path="/pomodoro" element={<PomodoroPage />} />
         <Route path="/revision" element={<QuickRevisionPage />} />
-        <Route path="/predictor" element={<BoardPredictorPage />} />
+         <Route path="/predictor" element={<BoardPredictorPage />} />
+         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
