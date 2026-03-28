@@ -6,6 +6,7 @@ import { ArrowLeft, CheckCircle2, Sparkles, AlertTriangle, Lightbulb, BookOpen, 
 import AITeacherPanel from "@/components/AITeacherPanel";
 import TopicHub from "@/components/TopicHub";
 import AIExplainer from "@/components/AIExplainer";
+import { useContinueStudying } from "@/hooks/useContinueStudying";
 import ReactMarkdown from "react-markdown";
 import { getChapterContent, type ChapterContent } from "@/data/content";
 
