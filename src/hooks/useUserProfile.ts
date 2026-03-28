@@ -65,12 +65,13 @@ export function useUserProfile() {
       await supabase.from("user_profiles").upsert({
         user_id: userId,
         name: newProfile.name,
+        email: newProfile.email,
         category: newProfile.category,
         exam_id: newProfile.examId || null,
         class_level: newProfile.classLevel || null,
         stream: newProfile.stream || null,
         updated_at: new Date().toISOString(),
-      }, { onConflict: "user_id" });
+      } as any, { onConflict: "user_id" });
     } catch {
       // localStorage fallback already saved
     }
