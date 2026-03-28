@@ -94,9 +94,9 @@ export default function Dashboard() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-3">
           <span className="text-xs font-medium text-primary">{modeLabel}</span>
           <button
-            onClick={() => clearProfile()}
+            onClick={() => navigate("/settings")}
             className="text-muted-foreground hover:text-primary transition-colors"
-            title="Change selection"
+            title="Settings"
           >
             <Settings className="w-3.5 h-3.5" />
           </button>

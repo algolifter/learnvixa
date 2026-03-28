@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface UserProfile {
   name: string;
+  email: string;
   category: string;
   examId?: string;
   classLevel?: string;
@@ -40,6 +41,7 @@ export function useUserProfile() {
       if (data && !error) {
         setProfile({
           name: data.name,
+          email: (data as any).email || "",
           category: data.category,
           examId: data.exam_id || undefined,
           classLevel: data.class_level || undefined,
@@ -63,12 +65,13 @@ export function useUserProfile() {
       await supabase.from("user_profiles").upsert({
         user_id: userId,
         name: newProfile.name,
+        email: newProfile.email,
         category: newProfile.category,
         exam_id: newProfile.examId || null,
         class_level: newProfile.classLevel || null,
         stream: newProfile.stream || null,
         updated_at: new Date().toISOString(),
-      }, { onConflict: "user_id" });
+      } as any, { onConflict: "user_id" });
     } catch {
       // localStorage fallback already saved
     }

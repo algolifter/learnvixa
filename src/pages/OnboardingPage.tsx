@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserProfile } from "@/hooks/useUserProfile";
 import { mainCategories, cbseClasses, streams, entranceExamCategories, governmentExams } from "@/data/educationData";
-import { ArrowLeft, ArrowRight, GraduationCap, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, GraduationCap, Sparkles, Mail, User } from "lucide-react";
 
 interface Props {
   onComplete: (profile: UserProfile) => void;
@@ -17,14 +17,17 @@ const fadeSlide = {
 export default function OnboardingPage({ onComplete }: Props) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [category, setCategory] = useState("");
   const [classLevel, setClassLevel] = useState("");
   const [stream, setStream] = useState("");
   const [examId, setExamId] = useState("");
   const [examCategoryId, setExamCategoryId] = useState("");
 
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
   const canProceed = () => {
-    if (step === 0) return name.trim().length >= 2;
+    if (step === 0) return name.trim().length >= 2 && isValidEmail(email.trim());
     if (step === 1) return !!category;
     if (step === 2) {
       if (category === "school") {
@@ -45,6 +48,7 @@ export default function OnboardingPage({ onComplete }: Props) {
     } else {
       onComplete({
         name: name.trim(),
+        email: email.trim(),
         category,
         examId: examId || undefined,
         classLevel: classLevel || undefined,
@@ -76,7 +80,7 @@ export default function OnboardingPage({ onComplete }: Props) {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* Step 0: Name */}
+          {/* Step 0: Name & Email */}
           {step === 0 && (
             <motion.div key="name" {...fadeSlide} className="space-y-6">
               <div className="text-center space-y-2">
@@ -86,17 +90,36 @@ export default function OnboardingPage({ onComplete }: Props) {
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground">Welcome to Study Hub</h1>
                 <p className="text-muted-foreground text-sm">India's complete education platform. Let's get you started.</p>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">What's your name?</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && canProceed() && handleNext()}
-                  placeholder="Enter your name"
-                  autoFocus
-                  className="w-full h-12 px-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-shadow"
-                />
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5" /> Your Name
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    placeholder="Enter your name"
+                    autoFocus
+                    className="w-full h-12 px-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-shadow"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5" /> Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && canProceed() && handleNext()}
+                    placeholder="you@example.com"
+                    className="w-full h-12 px-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-shadow"
+                  />
+                  {email && !isValidEmail(email) && (
+                    <p className="text-xs text-destructive">Please enter a valid email address</p>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
