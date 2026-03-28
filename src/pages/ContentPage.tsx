@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { getSubject, getChapter } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
