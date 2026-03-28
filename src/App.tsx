@@ -12,6 +12,7 @@ import CalmMode from "./pages/CalmMode";
 import PomodoroPage from "./pages/PomodoroPage";
 import QuickRevisionPage from "./pages/QuickRevisionPage";
 import BoardPredictorPage from "./pages/BoardPredictorPage";
+import SettingsPage from "./pages/SettingsPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import NotFound from "./pages/NotFound";
 import ThemeToggle from "./components/ThemeToggle";
