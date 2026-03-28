@@ -168,10 +168,23 @@ export default function ContentPage() {
   const { subjectId, chapterId, section } = useParams<{ subjectId: string; chapterId: string; section: string }>();
   const navigate = useNavigate();
   const { markSection } = useStudyProgress();
+  const { recordStudy } = useContinueStudying();
   const subject = getSubject(subjectId || "");
   const chapter = getChapter(subjectId || "", Number(chapterId));
 
   if (!subject || !chapter || !section) return <div className="min-h-screen flex items-center justify-center">Not found</div>;
+
+  // Record this as the last studied item
+  useEffect(() => {
+    recordStudy({
+      subjectId: subject.id,
+      subjectName: subject.name,
+      subjectIcon: subject.icon,
+      chapterId: chapter.id,
+      chapterName: chapter.name,
+      section,
+    });
+  }, [subject.id, chapter.id, section]);
 
   const sectionLabels: Record<string, string> = {
     topics: "Topics · Deep Explanation",
