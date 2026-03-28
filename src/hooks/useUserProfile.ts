@@ -41,6 +41,7 @@ export function useUserProfile() {
       if (data && !error) {
         setProfile({
           name: data.name,
+          email: (data as any).email || "",
           category: data.category,
           examId: data.exam_id || undefined,
           classLevel: data.class_level || undefined,
