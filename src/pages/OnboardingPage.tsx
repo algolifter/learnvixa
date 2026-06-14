@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight, GraduationCap, Sparkles, Mail, User } from "luci
 
 interface Props {
   onComplete: (profile: UserProfile) => void;
+  initialName?: string;
+  initialEmail?: string;
 }
 
 const fadeSlide = {
@@ -14,10 +16,11 @@ const fadeSlide = {
   exit: { opacity: 0, x: -40, transition: { duration: 0.3 } },
 };
 
-export default function OnboardingPage({ onComplete }: Props) {
-  const [step, setStep] = useState(0);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+export default function OnboardingPage({ onComplete, initialName = "", initialEmail = "" }: Props) {
+  const hasAccount = !!(initialName || initialEmail);
+  const [step, setStep] = useState(hasAccount ? 1 : 0);
+  const [name, setName] = useState(initialName);
+  const [email, setEmail] = useState(initialEmail);
   const [category, setCategory] = useState("");
   const [classLevel, setClassLevel] = useState("");
   const [stream, setStream] = useState("");
