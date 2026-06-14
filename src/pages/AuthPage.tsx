@@ -88,6 +88,16 @@ export default function AuthPage() {
           </p>
         </div>
 
+        {devMode && mode === "login" && (
+          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-xl bg-warning/10 border border-warning/30 text-warning text-xs">
+            <Wrench className="w-3.5 h-3.5 flex-shrink-0" />
+            <span>
+              <strong>Dev Mode:</strong> admin email prefilled.{" "}
+              {DEV_ADMIN_PASSWORD ? "Auto sign-in in progress…" : "Enter password to sign in."}
+            </span>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4 bg-card border border-border rounded-2xl p-6 shadow-sm">
           {mode === "signup" && (
             <div className="space-y-1.5">
