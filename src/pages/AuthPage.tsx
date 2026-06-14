@@ -1,17 +1,36 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { GraduationCap, Mail, Lock, User, Loader2 } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, Loader2, Wrench } from "lucide-react";
+import { isDevEnvironment, DEV_ADMIN_EMAIL, DEV_ADMIN_PASSWORD } from "@/config/devMode";
 
 type Mode = "login" | "signup" | "reset";
 
 export default function AuthPage() {
+  const devMode = isDevEnvironment();
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(devMode ? DEV_ADMIN_EMAIL : "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const autoTriedRef = useRef(false);
+
+  // Fully automatic dev sign-in when password is provided via env.
+  useEffect(() => {
+    if (!devMode || autoTriedRef.current) return;
+    if (!DEV_ADMIN_PASSWORD) return;
+    autoTriedRef.current = true;
+    (async () => {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: DEV_ADMIN_EMAIL,
+        password: DEV_ADMIN_PASSWORD,
+      });
+      setLoading(false);
+      if (error) toast.error(`Dev auto-login failed: ${error.message}`);
+    })();
+  }, [devMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +87,16 @@ export default function AuthPage() {
             {mode === "reset" && "We'll send you a reset link."}
           </p>
         </div>
+
+        {devMode && mode === "login" && (
+          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-xl bg-warning/10 border border-warning/30 text-warning text-xs">
+            <Wrench className="w-3.5 h-3.5 flex-shrink-0" />
+            <span>
+              <strong>Dev Mode:</strong> admin email prefilled.{" "}
+              {DEV_ADMIN_PASSWORD ? "Auto sign-in in progress…" : "Enter password to sign in."}
+            </span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4 bg-card border border-border rounded-2xl p-6 shadow-sm">
           {mode === "signup" && (

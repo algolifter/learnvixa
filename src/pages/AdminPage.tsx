@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
-import { ArrowLeft, Users, Shield, Loader2, BookOpen } from "lucide-react";
+import { ArrowLeft, Users, Shield, Loader2, BookOpen, FolderTree, ChevronRight } from "lucide-react";
 
 interface ProfileRow {
   user_id: string;
@@ -90,6 +90,24 @@ export default function AdminPage() {
           ))}
         </div>
 
+        <button
+          onClick={() => navigate("/admin/content")}
+          className="w-full mb-6 group bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-primary/40 hover:bg-primary/5 transition-all text-left flex items-center gap-4"
+        >
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <FolderTree className="w-6 h-6 text-primary" />
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold text-foreground">Content Management</div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              Build the catalog: categories, exams, classes, subjects, chapters, notes, questions, PYQs.
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+        </button>
+
+
+
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-border">
             <h2 className="font-semibold text-foreground">Registered Users</h2>
@@ -123,9 +141,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground text-center mt-6">
-          Content management features coming soon.
-        </p>
       </div>
     </div>
   );
