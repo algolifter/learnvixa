@@ -18,10 +18,12 @@ import OnboardingPage from "./pages/OnboardingPage";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AdminPage from "./pages/AdminPage";
+import AdminContentPage from "./pages/AdminContentPage";
 import NotFound from "./pages/NotFound";
 import ThemeToggle from "./components/ThemeToggle";
 import AIChatbot from "./components/AIChatbot";
 import NavigationMenu from "./components/NavigationMenu";
+import DevModeBadge from "./components/DevModeBadge";
 
 const queryClient = new QueryClient();
 
