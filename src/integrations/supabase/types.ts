@@ -14,6 +14,106 @@ export type Database = {
   }
   public: {
     Tables: {
+      content_items: {
+        Row: {
+          body: string
+          chapter_id: string
+          created_at: string
+          id: string
+          is_published: boolean
+          item_type: string
+          metadata: Json
+          order_index: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          chapter_id: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          item_type: string
+          metadata?: Json
+          order_index?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          item_type?: string
+          metadata?: Json
+          order_index?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_items_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "content_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_nodes: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_published: boolean
+          metadata: Json
+          node_type: string
+          order_index: number
+          parent_id: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          metadata?: Json
+          node_type: string
+          order_index?: number
+          parent_id?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          metadata?: Json
+          node_type?: string
+          order_index?: number
+          parent_id?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_nodes_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "content_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_progress: {
         Row: {
           id: string
