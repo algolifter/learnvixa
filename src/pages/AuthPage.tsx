@@ -1,17 +1,36 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { GraduationCap, Mail, Lock, User, Loader2 } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, Loader2, Wrench } from "lucide-react";
+import { isDevEnvironment, DEV_ADMIN_EMAIL, DEV_ADMIN_PASSWORD } from "@/config/devMode";
 
 type Mode = "login" | "signup" | "reset";
 
 export default function AuthPage() {
+  const devMode = isDevEnvironment();
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(devMode ? DEV_ADMIN_EMAIL : "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const autoTriedRef = useRef(false);
+
+  // Fully automatic dev sign-in when password is provided via env.
+  useEffect(() => {
+    if (!devMode || autoTriedRef.current) return;
+    if (!DEV_ADMIN_PASSWORD) return;
+    autoTriedRef.current = true;
+    (async () => {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: DEV_ADMIN_EMAIL,
+        password: DEV_ADMIN_PASSWORD,
+      });
+      setLoading(false);
+      if (error) toast.error(`Dev auto-login failed: ${error.message}`);
+    })();
+  }, [devMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
