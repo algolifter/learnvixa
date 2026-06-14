@@ -141,9 +141,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground text-center mt-6">
-          Content management features coming soon.
-        </p>
       </div>
     </div>
   );
