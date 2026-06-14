@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import Index from "./pages/Index";
 import SubjectPage from "./pages/SubjectPage";
@@ -14,6 +15,9 @@ import QuickRevisionPage from "./pages/QuickRevisionPage";
 import BoardPredictorPage from "./pages/BoardPredictorPage";
 import SettingsPage from "./pages/SettingsPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import AuthPage from "./pages/AuthPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 import ThemeToggle from "./components/ThemeToggle";
 import AIChatbot from "./components/AIChatbot";
@@ -21,23 +25,42 @@ import NavigationMenu from "./components/NavigationMenu";
 
 const queryClient = new QueryClient();
 
-function AppContent() {
-  const { profile, loading, saveProfile } = useUserProfile();
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
-  if (loading) {
+function AuthedAppContent() {
+  const { profile, loading, saveProfile } = useUserProfile();
+  const { user } = useAuth();
+  const location = useLocation();
+
+  // Allow reset-password route even when authed
+  if (location.pathname === "/reset-password") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
+      <Routes>
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+      </Routes>
     );
   }
 
+  if (loading) return <LoadingScreen />;
+
   if (!profile) {
-    return <OnboardingPage onComplete={saveProfile} />;
+    return (
+      <OnboardingPage
+        initialName={(user?.user_metadata as any)?.name || ""}
+        initialEmail={user?.email || ""}
+        onComplete={saveProfile}
+      />
+    );
   }
 
   return (
-    <BrowserRouter>
+    <>
       <NavigationMenu />
       <Routes>
         <Route path="/" element={<Index />} />
@@ -47,12 +70,33 @@ function AppContent() {
         <Route path="/calm" element={<CalmMode />} />
         <Route path="/pomodoro" element={<PomodoroPage />} />
         <Route path="/revision" element={<QuickRevisionPage />} />
-         <Route path="/predictor" element={<BoardPredictorPage />} />
-         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/predictor" element={<BoardPredictorPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
+}
+
+function Root() {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) return <LoadingScreen />;
+
+  // Public route: password reset
+  if (location.pathname === "/reset-password") {
+    return (
+      <Routes>
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+      </Routes>
+    );
+  }
+
+  if (!user) return <AuthPage />;
+
+  return <AuthedAppContent />;
 }
 
 const App = () => (
@@ -62,7 +106,9 @@ const App = () => (
       <Sonner />
       <ThemeToggle />
       <AIChatbot />
-      <AppContent />
+      <BrowserRouter>
+        <Root />
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

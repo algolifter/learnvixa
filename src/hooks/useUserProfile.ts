@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "./useAuth";
 
 export interface UserProfile {
   name: string;
@@ -10,80 +11,84 @@ export interface UserProfile {
   stream?: string;
 }
 
-const USER_ID_KEY = "study-hub-user-id";
-
-function getOrCreateUserId(): string {
-  let id = localStorage.getItem(USER_ID_KEY);
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem(USER_ID_KEY, id);
-  }
-  return id;
-}
-
 export function useUserProfile() {
+  const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const userId = getOrCreateUserId();
 
   useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (data && !error) {
-        setProfile({
-          name: data.name,
-          email: (data as any).email || "",
-          category: data.category,
-          examId: data.exam_id || undefined,
-          classLevel: data.class_level || undefined,
-          stream: data.stream || undefined,
-        });
-      }
-    } catch {
-      // fallback to localStorage
-      const cached = localStorage.getItem("study-hub-profile");
-      if (cached) setProfile(JSON.parse(cached));
-    } finally {
+    if (authLoading) return;
+    if (!user) {
+      setProfile(null);
       setLoading(false);
+      return;
     }
+    loadProfile(user.id, user.email ?? "");
+    // Update last_login
+    supabase
+      .from("user_profiles")
+      .update({ last_login_at: new Date().toISOString() } as any)
+      .eq("user_id", user.id)
+      .then(() => {});
+  }, [user, authLoading]);
+
+  const loadProfile = async (userId: string, email: string) => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (data) {
+      const d = data as any;
+      // If category is empty, treat as no profile (needs onboarding)
+      if (d.category) {
+        setProfile({
+          name: d.name || "",
+          email: d.email || email,
+          category: d.category,
+          examId: d.exam_id || undefined,
+          classLevel: d.class_level || undefined,
+          stream: d.stream || undefined,
+        });
+      } else {
+        // Profile row exists but no onboarding yet
+        setProfile(null);
+      }
+    } else {
+      setProfile(null);
+    }
+    setLoading(false);
   };
 
   const saveProfile = useCallback(async (newProfile: UserProfile) => {
+    if (!user) return;
     setProfile(newProfile);
-    localStorage.setItem("study-hub-profile", JSON.stringify(newProfile));
-
-    try {
-      await supabase.from("user_profiles").upsert({
-        user_id: userId,
-        name: newProfile.name,
-        email: newProfile.email,
-        category: newProfile.category,
-        exam_id: newProfile.examId || null,
-        class_level: newProfile.classLevel || null,
-        stream: newProfile.stream || null,
-        updated_at: new Date().toISOString(),
-      } as any, { onConflict: "user_id" });
-    } catch {
-      // localStorage fallback already saved
-    }
-  }, [userId]);
+    await supabase
+      .from("user_profiles")
+      .upsert(
+        {
+          user_id: user.id,
+          name: newProfile.name,
+          email: newProfile.email,
+          category: newProfile.category,
+          exam_id: newProfile.examId || null,
+          class_level: newProfile.classLevel || null,
+          stream: newProfile.stream || null,
+        } as any,
+        { onConflict: "user_id" }
+      );
+  }, [user]);
 
   const clearProfile = useCallback(async () => {
+    if (!user) return;
     setProfile(null);
-    localStorage.removeItem("study-hub-profile");
-    try {
-      await supabase.from("user_profiles").delete().eq("user_id", userId);
-    } catch {}
-  }, [userId]);
+    await supabase
+      .from("user_profiles")
+      .update({ category: null, exam_id: null, class_level: null, stream: null } as any)
+      .eq("user_id", user.id);
+  }, [user]);
 
-  return { profile, loading, saveProfile, clearProfile };
+  return { profile, loading: loading || authLoading, saveProfile, clearProfile };
 }
