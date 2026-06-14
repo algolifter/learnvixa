@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
-import { ArrowLeft, Users, Shield, Loader2, BookOpen } from "lucide-react";
+import { ArrowLeft, Users, Shield, Loader2, BookOpen, FolderTree, ChevronRight } from "lucide-react";
 
 interface ProfileRow {
   user_id: string;
