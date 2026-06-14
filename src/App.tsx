@@ -75,6 +75,7 @@ function AuthedAppContent() {
         <Route path="/predictor" element={<BoardPredictorPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/content" element={<AdminContentPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
