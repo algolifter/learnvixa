@@ -109,6 +109,7 @@ const App = () => (
       <Sonner />
       <ThemeToggle />
       <AIChatbot />
+      <DevModeBadge />
       <BrowserRouter>
         <AuthProvider>
           <Root />
