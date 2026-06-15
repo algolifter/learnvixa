@@ -85,8 +85,36 @@ function AuthedAppContent() {
 function Root() {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const [devAuthing, setDevAuthing] = useState(false);
+  const devTriedRef = useRef(false);
 
-  if (loading) return <LoadingScreen />;
+  useEffect(() => {
+    if (loading || user || devTriedRef.current) return;
+    if (!isDevEnvironment()) return;
+    devTriedRef.current = true;
+    setDevAuthing(true);
+    (async () => {
+      let { error } = await supabase.auth.signInWithPassword({
+        email: DEV_ADMIN_EMAIL,
+        password: DEV_ADMIN_PASSWORD,
+      });
+      if (error) {
+        // Account likely doesn't exist yet — create it.
+        const { error: signUpErr } = await supabase.auth.signUp({
+          email: DEV_ADMIN_EMAIL,
+          password: DEV_ADMIN_PASSWORD,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            data: { name: "Dev Admin" },
+          },
+        });
+        if (signUpErr) console.error("Dev auto sign-up failed:", signUpErr.message);
+      }
+      setDevAuthing(false);
+    })();
+  }, [loading, user]);
+
+  if (loading || devAuthing) return <LoadingScreen />;
 
   // Public route: password reset
   if (location.pathname === "/reset-password") {
