@@ -20,6 +20,7 @@ export const isDevEnvironment = (): boolean => {
   return Boolean(import.meta.env.DEV);
 };
 
-/** Optional password from local env for fully-automatic sign-in. */
-export const DEV_ADMIN_PASSWORD: string | undefined =
-  (import.meta.env.VITE_DEV_ADMIN_PASSWORD as string | undefined) || undefined;
+/** Password used for fully-automatic dev sign-in. */
+export const DEV_ADMIN_PASSWORD: string =
+  (import.meta.env.VITE_DEV_ADMIN_PASSWORD as string | undefined) ||
+  "DevMode!Learnvixa2026";
