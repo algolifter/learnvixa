@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import {
   ArrowLeft, ChevronRight, ChevronDown, Plus, Trash2, Edit3,
-  FolderTree, FileText, Loader2, Save, X,
+  FolderTree, FileText, Loader2, Save, X, Copy, Layers, Search,
 } from "lucide-react";
 import { toast } from "sonner";
 
