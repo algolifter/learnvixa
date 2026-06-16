@@ -83,6 +83,9 @@ export default function AdminContentPage() {
   const [editingNode, setEditingNode] = useState<ContentNode | null>(null);
   const [addingItem, setAddingItem] = useState<ItemType | null>(null);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
+  const [bulkUnderSubject, setBulkUnderSubject] = useState<ContentNode | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<DevStatus | "all">("all");
 
   useEffect(() => {
     if (roleLoading) return;
