@@ -487,6 +487,7 @@ function NodeEditor({
   const [icon, setIcon] = useState(existing?.icon ?? "");
   const [orderIndex, setOrderIndex] = useState(existing?.order_index ?? 0);
   const [isPublished, setIsPublished] = useState(existing?.is_published ?? true);
+  const [devStatus, setDevStatus] = useState<DevStatus>((existing?.development_status as DevStatus) ?? "coming_soon");
 
   const autoSlug = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -512,6 +513,13 @@ function NodeEditor({
             <input type="number" className={inputCls} value={orderIndex} onChange={e => setOrderIndex(Number(e.target.value))} />
           </Field>
         </div>
+        <Field label="Development status">
+          <select className={inputCls} value={devStatus} onChange={e => setDevStatus(e.target.value as DevStatus)}>
+            {DEV_STATUS_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </Field>
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input type="checkbox" checked={isPublished} onChange={e => setIsPublished(e.target.checked)} />
           Published
@@ -526,7 +534,42 @@ function NodeEditor({
             icon: icon || null,
             order_index: orderIndex,
             is_published: isPublished,
+            development_status: devStatus,
           });
+        }} />
+      </div>
+    </Modal>
+  );
+}
+
+function BulkPlaceholderModal({
+  subject, onCancel, onCreate,
+}: {
+  subject: ContentNode;
+  onCancel: () => void;
+  onCreate: (subject: ContentNode, count: number, pattern: string) => void;
+}) {
+  const [count, setCount] = useState(5);
+  const [pattern, setPattern] = useState("Chapter {n}");
+  return (
+    <Modal title={`Bulk add chapters to ${subject.title}`} onClose={onCancel}>
+      <div className="space-y-3">
+        <p className="text-xs text-muted-foreground">
+          Creates empty chapter placeholders marked as "Coming Soon". Fill content later, one chapter at a time.
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="How many?">
+            <input type="number" min={1} max={50} className={inputCls} value={count} onChange={e => setCount(Math.max(1, Math.min(50, Number(e.target.value))))} />
+          </Field>
+          <Field label="Title pattern">
+            <input className={inputCls} value={pattern} onChange={e => setPattern(e.target.value)} placeholder="Chapter {n}" />
+          </Field>
+        </div>
+        <p className="text-[11px] text-muted-foreground">Use <code className="px-1 rounded bg-muted">{`{n}`}</code> as the chapter number placeholder.</p>
+        <ModalActions onCancel={onCancel} saveLabel="Create placeholders" onSave={() => {
+          if (count < 1) return toast.error("At least 1");
+          if (!pattern.trim()) return toast.error("Pattern required");
+          onCreate(subject, count, pattern);
         }} />
       </div>
     </Modal>
