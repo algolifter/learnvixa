@@ -654,14 +654,14 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   );
 }
 
-function ModalActions({ onCancel, onSave }: { onCancel: () => void; onSave: () => void }) {
+function ModalActions({ onCancel, onSave, saveLabel = "Save" }: { onCancel: () => void; onSave: () => void; saveLabel?: string }) {
   return (
     <div className="flex items-center justify-end gap-2 pt-2">
       <button onClick={onCancel} className="px-3 py-2 rounded-xl text-sm text-foreground hover:bg-muted">
         Cancel
       </button>
       <button onClick={onSave} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90">
-        <Save className="w-4 h-4" /> Save
+        <Save className="w-4 h-4" /> {saveLabel}
       </button>
     </div>
   );
