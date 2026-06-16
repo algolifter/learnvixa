@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, CheckCircle2, BookOpen } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import type { TopicPage } from "@/data/content/physics-ch1";
+import type { TopicPage } from "@/data/content/types";
 
 interface TopicPageViewerProps {
   pages: TopicPage[];
