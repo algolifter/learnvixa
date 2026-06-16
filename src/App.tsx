@@ -22,6 +22,7 @@ import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AdminPage from "./pages/AdminPage";
 import AdminContentPage from "./pages/AdminContentPage";
+import AdminRoadmapPage from "./pages/AdminRoadmapPage";
 import NotFound from "./pages/NotFound";
 import ThemeToggle from "./components/ThemeToggle";
 import AIChatbot from "./components/AIChatbot";
@@ -79,6 +80,7 @@ function AuthedAppContent() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/content" element={<AdminContentPage />} />
+        <Route path="/admin/roadmap" element={<AdminRoadmapPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

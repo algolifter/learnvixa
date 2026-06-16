@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import {
   ArrowLeft, ChevronRight, ChevronDown, Plus, Trash2, Edit3,
-  FolderTree, FileText, Loader2, Save, X,
+  FolderTree, FileText, Loader2, Save, X, Copy, Layers, Search,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,7 +23,17 @@ interface ContentNode {
   icon: string | null;
   order_index: number;
   is_published: boolean;
+  development_status?: string;
 }
+
+type DevStatus = "active" | "planned" | "future" | "coming_soon";
+const DEV_STATUS_OPTIONS: { value: DevStatus; label: string; color: string }[] = [
+  { value: "active",       label: "Active Development", color: "bg-emerald-500/15 text-emerald-600" },
+  { value: "planned",      label: "Planned",            color: "bg-primary/15 text-primary" },
+  { value: "future",       label: "Future Expansion",   color: "bg-accent/15 text-accent" },
+  { value: "coming_soon",  label: "Coming Soon",        color: "bg-muted text-muted-foreground" },
+];
+const statusMeta = (s?: string) => DEV_STATUS_OPTIONS.find(o => o.value === s) ?? DEV_STATUS_OPTIONS[3];
 
 interface ContentItem {
   id: string;
@@ -73,6 +83,9 @@ export default function AdminContentPage() {
   const [editingNode, setEditingNode] = useState<ContentNode | null>(null);
   const [addingItem, setAddingItem] = useState<ItemType | null>(null);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
+  const [bulkUnderSubject, setBulkUnderSubject] = useState<ContentNode | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<DevStatus | "all">("all");
 
   useEffect(() => {
     if (roleLoading) return;
@@ -146,6 +159,57 @@ export default function AdminContentPage() {
     loadAll();
   }
 
+  async function duplicateChapter(chapter: ContentNode) {
+    const { data: newChap, error } = await supabase
+      .from("content_nodes" as any)
+      .insert({
+        parent_id: chapter.parent_id,
+        node_type: chapter.node_type,
+        slug: `${chapter.slug}-copy`,
+        title: `${chapter.title} (copy)`,
+        description: chapter.description,
+        icon: chapter.icon,
+        order_index: chapter.order_index + 1,
+        is_published: false,
+        development_status: chapter.development_status ?? "coming_soon",
+      })
+      .select()
+      .single();
+    if (error || !newChap) return toast.error(error?.message ?? "Failed to duplicate");
+    const chapItems = items.filter(i => i.chapter_id === chapter.id);
+    if (chapItems.length) {
+      const cloned = chapItems.map(({ id, ...rest }) => ({ ...rest, chapter_id: (newChap as any).id }));
+      const { error: itemErr } = await supabase.from("content_items" as any).insert(cloned as any);
+      if (itemErr) toast.error(`Chapter cloned, items failed: ${itemErr.message}`);
+    }
+    toast.success("Chapter duplicated");
+    loadAll();
+  }
+
+  async function bulkCreatePlaceholders(subject: ContentNode, count: number, pattern: string) {
+    const existing = nodes.filter(n => n.parent_id === subject.id).length;
+    const rows = Array.from({ length: count }, (_, i) => {
+      const n = existing + i + 1;
+      const title = pattern.replace(/\{n\}/g, String(n));
+      return {
+        parent_id: subject.id,
+        node_type: "chapter" as NodeType,
+        slug: `chapter-${n}-${Date.now()}-${i}`,
+        title,
+        description: null,
+        icon: null,
+        order_index: existing + i,
+        is_published: false,
+        development_status: "coming_soon",
+      };
+    });
+    const { error } = await supabase.from("content_nodes" as any).insert(rows as any);
+    if (error) return toast.error(error.message);
+    toast.success(`Created ${count} placeholder chapter${count === 1 ? "" : "s"}`);
+    setBulkUnderSubject(null);
+    loadAll();
+  }
+
   if (roleLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -154,11 +218,23 @@ export default function AdminContentPage() {
     );
   }
 
+  const matchesFilters = (node: ContentNode): boolean => {
+    const s = search.trim().toLowerCase();
+    const selfMatch =
+      (!s || node.title.toLowerCase().includes(s) || node.slug.toLowerCase().includes(s)) &&
+      (statusFilter === "all" || (node.development_status ?? "coming_soon") === statusFilter);
+    if (selfMatch) return true;
+    return childrenOf(node.id).some(matchesFilters);
+  };
+
   const renderNode = (node: ContentNode, depth: number) => {
+    if (!matchesFilters(node)) return null;
     const kids = childrenOf(node.id);
-    const isOpen = expanded.has(node.id);
+    const isOpen = expanded.has(node.id) || !!search.trim() || statusFilter !== "all";
     const childType = childTypeOf[node.node_type];
     const isChapter = node.node_type === "chapter";
+    const isSubject = node.node_type === "subject";
+    const sm = statusMeta(node.development_status);
 
     return (
       <div key={node.id} className="border-l border-border/60" style={{ marginLeft: depth * 8 }}>
@@ -174,17 +250,38 @@ export default function AdminContentPage() {
             {node.node_type}
           </span>
           <span className="text-sm text-foreground truncate flex-1">{node.title}</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${sm.color}`} title="Development status">
+            {sm.label}
+          </span>
           {!node.is_published && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">draft</span>
           )}
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {isChapter && (
+              <>
+                <button
+                  onClick={() => { setSelectedChapter(node); toggle(node.id); }}
+                  className="p-1 text-muted-foreground hover:text-primary"
+                  title="Manage content"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => duplicateChapter(node)}
+                  className="p-1 text-muted-foreground hover:text-primary"
+                  title="Duplicate chapter"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
+            {isSubject && (
               <button
-                onClick={() => { setSelectedChapter(node); toggle(node.id); }}
+                onClick={() => setBulkUnderSubject(node)}
                 className="p-1 text-muted-foreground hover:text-primary"
-                title="Manage content"
+                title="Bulk add chapter placeholders"
               >
-                <FileText className="w-3.5 h-3.5" />
+                <Layers className="w-3.5 h-3.5" />
               </button>
             )}
             {childType && (
@@ -243,6 +340,33 @@ export default function AdminContentPage() {
           </button>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by title or slug..."
+              className="w-full pl-9 pr-3 py-2 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+          <div className="flex items-center gap-1 flex-wrap">
+            {(["all", ...DEV_STATUS_OPTIONS.map(o => o.value)] as (DevStatus | "all")[]).map(s => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${
+                  statusFilter === s
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-muted-foreground border-border hover:text-foreground"
+                }`}
+              >
+                {s === "all" ? "All" : DEV_STATUS_OPTIONS.find(o => o.value === s)!.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
           className="bg-card border border-border rounded-2xl p-3 shadow-sm"
@@ -285,6 +409,14 @@ export default function AdminContentPage() {
           existing={editingItem}
           onCancel={() => { setAddingItem(null); setEditingItem(null); }}
           onSave={saveItem}
+        />
+      )}
+
+      {bulkUnderSubject && (
+        <BulkPlaceholderModal
+          subject={bulkUnderSubject}
+          onCancel={() => setBulkUnderSubject(null)}
+          onCreate={bulkCreatePlaceholders}
         />
       )}
     </div>
@@ -355,6 +487,7 @@ function NodeEditor({
   const [icon, setIcon] = useState(existing?.icon ?? "");
   const [orderIndex, setOrderIndex] = useState(existing?.order_index ?? 0);
   const [isPublished, setIsPublished] = useState(existing?.is_published ?? true);
+  const [devStatus, setDevStatus] = useState<DevStatus>((existing?.development_status as DevStatus) ?? "coming_soon");
 
   const autoSlug = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -380,6 +513,13 @@ function NodeEditor({
             <input type="number" className={inputCls} value={orderIndex} onChange={e => setOrderIndex(Number(e.target.value))} />
           </Field>
         </div>
+        <Field label="Development status">
+          <select className={inputCls} value={devStatus} onChange={e => setDevStatus(e.target.value as DevStatus)}>
+            {DEV_STATUS_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </Field>
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input type="checkbox" checked={isPublished} onChange={e => setIsPublished(e.target.checked)} />
           Published
@@ -394,7 +534,42 @@ function NodeEditor({
             icon: icon || null,
             order_index: orderIndex,
             is_published: isPublished,
+            development_status: devStatus,
           });
+        }} />
+      </div>
+    </Modal>
+  );
+}
+
+function BulkPlaceholderModal({
+  subject, onCancel, onCreate,
+}: {
+  subject: ContentNode;
+  onCancel: () => void;
+  onCreate: (subject: ContentNode, count: number, pattern: string) => void;
+}) {
+  const [count, setCount] = useState(5);
+  const [pattern, setPattern] = useState("Chapter {n}");
+  return (
+    <Modal title={`Bulk add chapters to ${subject.title}`} onClose={onCancel}>
+      <div className="space-y-3">
+        <p className="text-xs text-muted-foreground">
+          Creates empty chapter placeholders marked as "Coming Soon". Fill content later, one chapter at a time.
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="How many?">
+            <input type="number" min={1} max={50} className={inputCls} value={count} onChange={e => setCount(Math.max(1, Math.min(50, Number(e.target.value))))} />
+          </Field>
+          <Field label="Title pattern">
+            <input className={inputCls} value={pattern} onChange={e => setPattern(e.target.value)} placeholder="Chapter {n}" />
+          </Field>
+        </div>
+        <p className="text-[11px] text-muted-foreground">Use <code className="px-1 rounded bg-muted">{`{n}`}</code> as the chapter number placeholder.</p>
+        <ModalActions onCancel={onCancel} saveLabel="Create placeholders" onSave={() => {
+          if (count < 1) return toast.error("At least 1");
+          if (!pattern.trim()) return toast.error("Pattern required");
+          onCreate(subject, count, pattern);
         }} />
       </div>
     </Modal>
@@ -479,14 +654,14 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   );
 }
 
-function ModalActions({ onCancel, onSave }: { onCancel: () => void; onSave: () => void }) {
+function ModalActions({ onCancel, onSave, saveLabel = "Save" }: { onCancel: () => void; onSave: () => void; saveLabel?: string }) {
   return (
     <div className="flex items-center justify-end gap-2 pt-2">
       <button onClick={onCancel} className="px-3 py-2 rounded-xl text-sm text-foreground hover:bg-muted">
         Cancel
       </button>
       <button onClick={onSave} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90">
-        <Save className="w-4 h-4" /> Save
+        <Save className="w-4 h-4" /> {saveLabel}
       </button>
     </div>
   );
