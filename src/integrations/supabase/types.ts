@@ -65,6 +65,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          development_status: string
           icon: string | null
           id: string
           is_published: boolean
@@ -79,6 +80,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          development_status?: string
           icon?: string | null
           id?: string
           is_published?: boolean
@@ -93,6 +95,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          development_status?: string
           icon?: string | null
           id?: string
           is_published?: boolean
@@ -113,6 +116,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      content_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          payload: Json
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          payload?: Json
+          template_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          payload?: Json
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      roadmap_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          sort_order: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       study_progress: {
         Row: {
@@ -224,7 +290,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "teacher" | "subject_expert" | "moderator"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -352,7 +418,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "teacher", "subject_expert", "moderator"],
     },
   },
 } as const
