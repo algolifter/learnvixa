@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { getSubject } from "@/data/subjects";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
 import { ArrowLeft, Bookmark, BookmarkCheck } from "lucide-react";
+import ComingSoon from "@/components/ComingSoon";
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.04 } } };
 const item = { hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } };
@@ -13,23 +14,18 @@ export default function SubjectPage() {
   const { getChapterProgress, toggleBookmark, getSubjectProgress } = useStudyProgress();
   const subject = getSubject(subjectId || "");
 
-  if (!subject) return <div className="min-h-screen flex items-center justify-center text-foreground">Subject not found</div>;
+  if (!subject) return <ComingSoon title="Subject not found" message="This subject isn't part of the catalog yet. It will appear here once content is added." backTo="/" backLabel="Back to Dashboard" status="future" />;
 
   if (subject.comingSoon) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8">
-        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
-          <span className="text-7xl mb-6 block">{subject.icon}</span>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-4">{subject.name}</h1>
-          <div className="glass rounded-2xl px-8 py-6 max-w-md">
-            <p className="text-lg text-primary font-semibold mb-2">🚧 Content Coming Soon</p>
-            <p className="text-muted-foreground text-sm">We're working hard to bring you comprehensive study material for Computer Science. Stay tuned!</p>
-          </div>
-          <button onClick={() => navigate("/")} className="mt-6 text-primary hover:underline text-sm flex items-center gap-2 mx-auto">
-            <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-          </button>
-        </motion.div>
-      </div>
+      <ComingSoon
+        title={subject.name}
+        icon={subject.icon}
+        message={`Comprehensive ${subject.name} content is on the roadmap. We're rolling out subjects one at a time — Class 12 first, then expanding upward.`}
+        backTo="/"
+        backLabel="Back to Dashboard"
+        status="planned"
+      />
     );
   }
 

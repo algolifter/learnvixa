@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getSubject, getChapter } from "@/data/subjects";
 import { ArrowLeft, BookOpen, FileText, HelpCircle, MessageSquare, PenTool, RotateCcw } from "lucide-react";
+import ComingSoon from "@/components/ComingSoon";
 
 const sections = [
   { key: "topics", label: "Topics", desc: "Deep Explanation", icon: BookOpen, color: "text-primary" },
@@ -21,7 +22,7 @@ export default function ChapterPage() {
   const subject = getSubject(subjectId || "");
   const chapter = getChapter(subjectId || "", Number(chapterId));
 
-  if (!subject || !chapter) return <div className="min-h-screen flex items-center justify-center text-foreground">Not found</div>;
+  if (!subject || !chapter) return <ComingSoon title="Chapter not found" message="This chapter hasn't been published yet. It'll appear here as content is gradually added." backTo="/" backLabel="Back to Dashboard" status="coming_soon" />;
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
