@@ -1,5 +1,5 @@
 import { listChapters } from "@/data/content";
-import { getAllSubjects } from "@/data/subjects";
+import { subjects } from "@/data/subjects";
 
 export interface MissingChapter {
   subjectId: string;
@@ -13,7 +13,7 @@ export interface MissingChapter {
 const requiredSections = ["topics", "notes", "questions2", "questions3", "questions5"] as const;
 
 export function computeStaticCoverage() {
-  const subjects = getAllSubjects().filter((s) => !s.comingSoon);
+  const liveSubjects = subjects.filter((s) => !s.comingSoon);
   const records = listChapters({ board: "cbse", classLevel: "12" });
   const recordKey = (sid: string, cid: number) => `${sid}-${cid}`;
   const byKey = new Map(records.map((r) => [recordKey(r.subjectId, r.chapterId), r]));
@@ -22,7 +22,7 @@ export function computeStaticCoverage() {
   let chaptersWithStatic = 0;
   const missing: MissingChapter[] = [];
 
-  for (const s of subjects) {
+  for (const s of liveSubjects) {
     for (const ch of s.chapters) {
       totalChapters++;
       const rec = byKey.get(recordKey(s.id, ch.id));
@@ -53,7 +53,7 @@ export function computeStaticCoverage() {
   }
 
   return {
-    totalSubjects: subjects.length,
+    totalSubjects: liveSubjects.length,
     totalChapters,
     chaptersWithStatic,
     coveragePct: totalChapters ? Math.round((chaptersWithStatic / totalChapters) * 100) : 0,
