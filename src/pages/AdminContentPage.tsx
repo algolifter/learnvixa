@@ -340,6 +340,33 @@ export default function AdminContentPage() {
           </button>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by title or slug..."
+              className="w-full pl-9 pr-3 py-2 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+          <div className="flex items-center gap-1 flex-wrap">
+            {(["all", ...DEV_STATUS_OPTIONS.map(o => o.value)] as (DevStatus | "all")[]).map(s => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${
+                  statusFilter === s
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-muted-foreground border-border hover:text-foreground"
+                }`}
+              >
+                {s === "all" ? "All" : DEV_STATUS_OPTIONS.find(o => o.value === s)!.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
           className="bg-card border border-border rounded-2xl p-3 shadow-sm"
@@ -382,6 +409,14 @@ export default function AdminContentPage() {
           existing={editingItem}
           onCancel={() => { setAddingItem(null); setEditingItem(null); }}
           onSave={saveItem}
+        />
+      )}
+
+      {bulkUnderSubject && (
+        <BulkPlaceholderModal
+          subject={bulkUnderSubject}
+          onCancel={() => setBulkUnderSubject(null)}
+          onCreate={bulkCreatePlaceholders}
         />
       )}
     </div>
