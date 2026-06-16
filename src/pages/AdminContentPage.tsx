@@ -23,7 +23,17 @@ interface ContentNode {
   icon: string | null;
   order_index: number;
   is_published: boolean;
+  development_status?: string;
 }
+
+type DevStatus = "active" | "planned" | "future" | "coming_soon";
+const DEV_STATUS_OPTIONS: { value: DevStatus; label: string; color: string }[] = [
+  { value: "active",       label: "Active Development", color: "bg-emerald-500/15 text-emerald-600" },
+  { value: "planned",      label: "Planned",            color: "bg-primary/15 text-primary" },
+  { value: "future",       label: "Future Expansion",   color: "bg-accent/15 text-accent" },
+  { value: "coming_soon",  label: "Coming Soon",        color: "bg-muted text-muted-foreground" },
+];
+const statusMeta = (s?: string) => DEV_STATUS_OPTIONS.find(o => o.value === s) ?? DEV_STATUS_OPTIONS[3];
 
 interface ContentItem {
   id: string;
