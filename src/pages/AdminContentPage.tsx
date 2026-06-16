@@ -218,11 +218,23 @@ export default function AdminContentPage() {
     );
   }
 
+  const matchesFilters = (node: ContentNode): boolean => {
+    const s = search.trim().toLowerCase();
+    const selfMatch =
+      (!s || node.title.toLowerCase().includes(s) || node.slug.toLowerCase().includes(s)) &&
+      (statusFilter === "all" || (node.development_status ?? "coming_soon") === statusFilter);
+    if (selfMatch) return true;
+    return childrenOf(node.id).some(matchesFilters);
+  };
+
   const renderNode = (node: ContentNode, depth: number) => {
+    if (!matchesFilters(node)) return null;
     const kids = childrenOf(node.id);
-    const isOpen = expanded.has(node.id);
+    const isOpen = expanded.has(node.id) || !!search.trim() || statusFilter !== "all";
     const childType = childTypeOf[node.node_type];
     const isChapter = node.node_type === "chapter";
+    const isSubject = node.node_type === "subject";
+    const sm = statusMeta(node.development_status);
 
     return (
       <div key={node.id} className="border-l border-border/60" style={{ marginLeft: depth * 8 }}>
@@ -238,17 +250,38 @@ export default function AdminContentPage() {
             {node.node_type}
           </span>
           <span className="text-sm text-foreground truncate flex-1">{node.title}</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${sm.color}`} title="Development status">
+            {sm.label}
+          </span>
           {!node.is_published && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">draft</span>
           )}
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {isChapter && (
+              <>
+                <button
+                  onClick={() => { setSelectedChapter(node); toggle(node.id); }}
+                  className="p-1 text-muted-foreground hover:text-primary"
+                  title="Manage content"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => duplicateChapter(node)}
+                  className="p-1 text-muted-foreground hover:text-primary"
+                  title="Duplicate chapter"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
+            {isSubject && (
               <button
-                onClick={() => { setSelectedChapter(node); toggle(node.id); }}
+                onClick={() => setBulkUnderSubject(node)}
                 className="p-1 text-muted-foreground hover:text-primary"
-                title="Manage content"
+                title="Bulk add chapter placeholders"
               >
-                <FileText className="w-3.5 h-3.5" />
+                <Layers className="w-3.5 h-3.5" />
               </button>
             )}
             {childType && (
