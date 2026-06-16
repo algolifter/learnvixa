@@ -159,6 +159,57 @@ export default function AdminContentPage() {
     loadAll();
   }
 
+  async function duplicateChapter(chapter: ContentNode) {
+    const { data: newChap, error } = await supabase
+      .from("content_nodes" as any)
+      .insert({
+        parent_id: chapter.parent_id,
+        node_type: chapter.node_type,
+        slug: `${chapter.slug}-copy`,
+        title: `${chapter.title} (copy)`,
+        description: chapter.description,
+        icon: chapter.icon,
+        order_index: chapter.order_index + 1,
+        is_published: false,
+        development_status: chapter.development_status ?? "coming_soon",
+      })
+      .select()
+      .single();
+    if (error || !newChap) return toast.error(error?.message ?? "Failed to duplicate");
+    const chapItems = items.filter(i => i.chapter_id === chapter.id);
+    if (chapItems.length) {
+      const cloned = chapItems.map(({ id, ...rest }) => ({ ...rest, chapter_id: (newChap as any).id }));
+      const { error: itemErr } = await supabase.from("content_items" as any).insert(cloned as any);
+      if (itemErr) toast.error(`Chapter cloned, items failed: ${itemErr.message}`);
+    }
+    toast.success("Chapter duplicated");
+    loadAll();
+  }
+
+  async function bulkCreatePlaceholders(subject: ContentNode, count: number, pattern: string) {
+    const existing = nodes.filter(n => n.parent_id === subject.id).length;
+    const rows = Array.from({ length: count }, (_, i) => {
+      const n = existing + i + 1;
+      const title = pattern.replace(/\{n\}/g, String(n));
+      return {
+        parent_id: subject.id,
+        node_type: "chapter" as NodeType,
+        slug: `chapter-${n}-${Date.now()}-${i}`,
+        title,
+        description: null,
+        icon: null,
+        order_index: existing + i,
+        is_published: false,
+        development_status: "coming_soon",
+      };
+    });
+    const { error } = await supabase.from("content_nodes" as any).insert(rows as any);
+    if (error) return toast.error(error.message);
+    toast.success(`Created ${count} placeholder chapter${count === 1 ? "" : "s"}`);
+    setBulkUnderSubject(null);
+    loadAll();
+  }
+
   if (roleLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
