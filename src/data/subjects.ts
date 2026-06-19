@@ -2,6 +2,8 @@ export interface Chapter {
   id: number;
   name: string;
   category?: string;
+  /** True for placeholder chapters with no authored content yet. */
+  comingSoon?: boolean;
 }
 
 export interface Subject {
@@ -10,6 +12,7 @@ export interface Subject {
   icon: string;
   color: string;
   chapters: Chapter[];
+  /** True when this subject's content is still on the roadmap. */
   comingSoon?: boolean;
 }
 
@@ -153,8 +156,14 @@ export const motivationalQuotes = [
   "Every problem you solve builds a bridge to your dream score.",
 ];
 
+import { getPlaceholderSubject } from "@/data/curriculum";
+
 export function getSubject(id: string): Subject | undefined {
-  return subjects.find((s) => s.id === id);
+  const real = subjects.find((s) => s.id === id);
+  if (real) return real;
+  // Fall back to the placeholder curriculum registry so users can browse
+  // every CBSE class / exam stream even before content is authored.
+  return getPlaceholderSubject(id);
 }
 
 export function getChapter(subjectId: string, chapterId: number): Chapter | undefined {

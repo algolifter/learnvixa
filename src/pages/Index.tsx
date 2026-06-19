@@ -212,33 +212,46 @@ export default function Dashboard() {
       {/* Subject Cards */}
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {displaySubjects.map((subject) => {
-          const progress = subject.comingSoon ? 0 : getSubjectProgress(subject.id, subject.chapters.length);
+          const totalChapters = subject.chapters.length;
+          const authoredChapters = subject.chapters.filter((c) => !c.comingSoon).length;
+          const isFullyAuthored = !subject.comingSoon && authoredChapters === totalChapters && totalChapters > 0;
+          const isPartiallyAuthored = authoredChapters > 0 && !isFullyAuthored;
+          const progress = isFullyAuthored ? getSubjectProgress(subject.id, totalChapters) : 0;
           const gradient = getColorForSubject(subject.id, subject.color);
+
+          const status = isFullyAuthored
+            ? { label: "Available", tone: "bg-accent/10 text-accent border-accent/30" }
+            : isPartiallyAuthored
+            ? { label: "In Development", tone: "bg-warning/10 text-warning border-warning/30" }
+            : { label: "Coming Soon", tone: "bg-muted text-muted-foreground border-border" };
+
           return (
             <motion.div
               key={subject.id}
               variants={item}
               whileHover={{ y: -4 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => !subject.comingSoon && navigate(`/subject/${subject.id}`)}
-              className={`bg-card border border-border rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg hover:border-primary/20 transition-all duration-300 ${
-                subject.comingSoon ? "cursor-default opacity-80" : "cursor-pointer"
-              }`}
+              onClick={() => navigate(`/subject/${subject.id}`)}
+              className="bg-card border border-border rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg hover:border-primary/20 transition-all duration-300 cursor-pointer"
             >
-              {/* Gradient bar top */}
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient}`} />
 
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-4xl">{subject.icon}</span>
-                <div>
-                  <h3 className="font-semibold text-lg text-foreground">{subject.name}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {subject.comingSoon ? "Coming Soon" : `${subject.chapters.length} Chapters`}
-                  </p>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-4xl">{subject.icon}</span>
+                  <div>
+                    <h3 className="font-semibold text-lg text-foreground">{subject.name}</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {totalChapters} {totalChapters === 1 ? "Chapter" : "Chapters"}
+                    </p>
+                  </div>
                 </div>
+                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${status.tone}`}>
+                  {status.label}
+                </span>
               </div>
 
-              {!subject.comingSoon && (
+              {isFullyAuthored ? (
                 <div>
                   <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
                     <span>Progress</span>
@@ -253,11 +266,21 @@ export default function Dashboard() {
                     />
                   </div>
                 </div>
-              )}
-
-              {subject.comingSoon && (
-                <div className="text-center py-2">
-                  <span className="text-xs px-3 py-1 rounded-full bg-muted text-muted-foreground">🚧 Content Coming Soon</span>
+              ) : (
+                <div>
+                  <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+                    <span>Content Authored</span>
+                    <span>{authoredChapters} / {totalChapters}</span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full bg-gradient-to-r ${gradient} opacity-60`}
+                      style={{ width: `${totalChapters ? (authoredChapters / totalChapters) * 100 : 0}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-2 text-center">
+                    Browse the chapter list →
+                  </p>
                 </div>
               )}
             </motion.div>
