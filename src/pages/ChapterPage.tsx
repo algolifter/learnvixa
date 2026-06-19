@@ -40,6 +40,11 @@ export default function ChapterPage() {
           Chapter {chapter.id} {chapter.category && `· ${chapter.category}`}
         </div>
         <h1 className="text-2xl md:text-4xl font-display font-bold text-foreground">{chapter.name}</h1>
+        {chapter.comingSoon && (
+          <div className="inline-flex items-center gap-2 mt-4 px-3 py-1 rounded-full border border-border bg-muted text-xs text-muted-foreground">
+            🚧 Content for this chapter is coming soon — sections below will fill in as we publish.
+          </div>
+        )}
       </motion.div>
 
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
