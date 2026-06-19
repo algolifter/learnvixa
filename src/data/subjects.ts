@@ -156,14 +156,13 @@ export const motivationalQuotes = [
   "Every problem you solve builds a bridge to your dream score.",
 ];
 
+import { getPlaceholderSubject } from "@/data/curriculum";
+
 export function getSubject(id: string): Subject | undefined {
   const real = subjects.find((s) => s.id === id);
   if (real) return real;
   // Fall back to the placeholder curriculum registry so users can browse
   // every CBSE class / exam stream even before content is authored.
-  // Lazy require to avoid a circular import at module init.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { getPlaceholderSubject } = require("@/data/curriculum") as typeof import("@/data/curriculum");
   return getPlaceholderSubject(id);
 }
 
