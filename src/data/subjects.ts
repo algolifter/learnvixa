@@ -157,7 +157,14 @@ export const motivationalQuotes = [
 ];
 
 export function getSubject(id: string): Subject | undefined {
-  return subjects.find((s) => s.id === id);
+  const real = subjects.find((s) => s.id === id);
+  if (real) return real;
+  // Fall back to the placeholder curriculum registry so users can browse
+  // every CBSE class / exam stream even before content is authored.
+  // Lazy require to avoid a circular import at module init.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { getPlaceholderSubject } = require("@/data/curriculum") as typeof import("@/data/curriculum");
+  return getPlaceholderSubject(id);
 }
 
 export function getChapter(subjectId: string, chapterId: number): Chapter | undefined {
