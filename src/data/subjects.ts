@@ -2,6 +2,8 @@ export interface Chapter {
   id: number;
   name: string;
   category?: string;
+  /** True for placeholder chapters with no authored content yet. */
+  comingSoon?: boolean;
 }
 
 export interface Subject {
@@ -10,6 +12,7 @@ export interface Subject {
   icon: string;
   color: string;
   chapters: Chapter[];
+  /** True when this subject's content is still on the roadmap. */
   comingSoon?: boolean;
 }
 
