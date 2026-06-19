@@ -47,11 +47,12 @@ export const entranceExamCategories: ExamCategory[] = [
     icon: "⚙️",
     description: "Engineering entrance exams",
     subcategories: [
-      { id: "jee", name: "JEE (Main + Advanced)", icon: "🎯", description: "IITs, NITs, IIITs" },
-      { id: "keam", name: "KEAM", icon: "🏛️", description: "Kerala Engineering", comingSoon: true },
-      { id: "bitsat", name: "BITSAT", icon: "💡", description: "BITS Pilani", comingSoon: true },
-      { id: "viteee", name: "VITEEE", icon: "🏫", description: "VIT University", comingSoon: true },
-      { id: "srmjeee", name: "SRMJEEE", icon: "🎓", description: "SRM University", comingSoon: true },
+      { id: "jee-main", name: "JEE Main", icon: "🎯", description: "NITs, IIITs & GFTIs" },
+      { id: "jee-advanced", name: "JEE Advanced", icon: "🏆", description: "IITs" },
+      { id: "bitsat", name: "BITSAT", icon: "💡", description: "BITS Pilani / Goa / Hyderabad" },
+      { id: "viteee", name: "VITEEE", icon: "🏫", description: "VIT University" },
+      { id: "keam", name: "KEAM", icon: "🏛️", description: "Kerala Engineering & Pharmacy" },
+      { id: "srmjeee", name: "SRMJEEE", icon: "🎓", description: "SRM University" },
     ],
   },
   {
@@ -60,7 +61,7 @@ export const entranceExamCategories: ExamCategory[] = [
     icon: "🩺",
     description: "Medical entrance exams",
     subcategories: [
-      { id: "neet", name: "NEET", icon: "🏥", description: "Medical & Dental colleges" },
+      { id: "neet", name: "NEET", icon: "🏥", description: "MBBS, BDS, AYUSH & Allied Sciences" },
     ],
   },
   {
@@ -69,19 +70,28 @@ export const entranceExamCategories: ExamCategory[] = [
     icon: "⚖️",
     description: "Law entrance exams",
     subcategories: [
-      { id: "clat", name: "CLAT", icon: "📚", description: "National Law Universities", comingSoon: true },
+      { id: "clat", name: "CLAT", icon: "📚", description: "National Law Universities" },
       { id: "ailet", name: "AILET", icon: "🏛️", description: "NLU Delhi", comingSoon: true },
     ],
   },
   {
-    id: "commerce-mgmt",
-    name: "Commerce & Management",
-    icon: "💼",
-    description: "Commerce entrance exams",
+    id: "university",
+    name: "University & Central",
+    icon: "🎓",
+    description: "Central university entrance exams",
     subcategories: [
-      { id: "cuet", name: "CUET", icon: "🎓", description: "Central Universities", comingSoon: true },
-      { id: "ipmat", name: "IPMAT", icon: "📈", description: "IIM Indore", comingSoon: true },
+      { id: "cuet", name: "CUET", icon: "🎓", description: "Central Universities (UG)" },
+      { id: "ipmat", name: "IPMAT", icon: "📈", description: "IIM Indore / Rohtak", comingSoon: true },
       { id: "ca-foundation", name: "CA Foundation", icon: "🧮", description: "Chartered Accountancy", comingSoon: true },
+    ],
+  },
+  {
+    id: "defence-entrance",
+    name: "Defence (Entrance)",
+    icon: "🎖️",
+    description: "Defence services entrance exams",
+    subcategories: [
+      { id: "nda", name: "NDA", icon: "🛡️", description: "National Defence Academy" },
     ],
   },
   {
