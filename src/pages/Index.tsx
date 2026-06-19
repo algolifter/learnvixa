@@ -220,7 +220,7 @@ export default function Dashboard() {
           const gradient = getColorForSubject(subject.id, subject.color);
 
           const status = isFullyAuthored
-            ? { label: "Available", tone: "bg-success/10 text-success border-success/30" }
+            ? { label: "Available", tone: "bg-accent/10 text-accent border-accent/30" }
             : isPartiallyAuthored
             ? { label: "In Development", tone: "bg-warning/10 text-warning border-warning/30" }
             : { label: "Coming Soon", tone: "bg-muted text-muted-foreground border-border" };
