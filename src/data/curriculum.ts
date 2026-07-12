@@ -750,7 +750,9 @@ function defenceSubjects(): Subject[] {
 const ALL_PLACEHOLDER_SUBJECTS: Subject[] = [
   ...preprimarySubjects("cbse-lkg"),
   ...preprimarySubjects("cbse-ukg"),
-  ...Array.from({ length: 2 }, (_, i) => preprimarySubjects(`cbse-class-${i + 1}`)).flat(),
+  ...class1Subjects(),
+  ...preprimarySubjects("cbse-class-2"),
+
   ...Array.from({ length: 3 }, (_, i) => juniorPrimarySubjects(`cbse-class-${i + 3}`)).flat(),
   ...Array.from({ length: 3 }, (_, i) => middleSchoolSubjects(`cbse-class-${i + 6}`)).flat(),
   ...class9Subjects(),
