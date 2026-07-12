@@ -796,7 +796,7 @@ export function getPlaceholderChapter(subjectId: string, chapterId: number): Cha
 const cbseClassSubjectsByClass: Record<string, () => Subject[]> = {
   "lkg": () => preprimarySubjects("cbse-lkg"),
   "ukg": () => preprimarySubjects("cbse-ukg"),
-  "class-1": () => preprimarySubjects("cbse-class-1"),
+  "class-1": class1Subjects,
   "class-2": () => preprimarySubjects("cbse-class-2"),
   "class-3": () => juniorPrimarySubjects("cbse-class-3"),
   "class-4": () => juniorPrimarySubjects("cbse-class-4"),
