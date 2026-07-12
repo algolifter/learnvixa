@@ -43,7 +43,7 @@ const GENERIC_6 = [...GENERIC_4, "Unit 5 — Advanced Topics", "Unit 6 — Revis
 // SCHOOL — CBSE
 // =====================================================================
 
-// ---- LKG / UKG / Primary (Classes 1-2) ----
+// ---- LKG / UKG (pre-primary — kept generic) ----
 function preprimarySubjects(prefix: string): Subject[] {
   return [
     mkSubject(`${prefix}-english`, "English", "📖", "0 80% 55%", [
@@ -60,6 +60,74 @@ function preprimarySubjects(prefix: string): Subject[] {
     ]),
     mkSubject(`${prefix}-art`, "Art & Craft", "🎨", "38 92% 55%", [
       "Drawing Basics", "Coloring", "Paper Craft", "Creative Play",
+    ]),
+  ];
+}
+
+// ---- Class 1 (NEP 2023 / NCF-FS aligned — Mridang, Sarangi, Joyful Mathematics) ----
+// Real NCERT chapter names. Content is authored file-by-file under
+// src/data/content/ (auto-discovered); chapters without a matching file
+// simply show the standard "Coming Soon" placeholder.
+function class1Subjects(): Subject[] {
+  const p = "cbse-class-1";
+  const english: Chapter[] = [
+    "Two Little Hands",
+    "Greetings",
+    "Picture Time",
+    "The Cap-seller and the Monkeys",
+    "A Farm",
+    "Fun with Pictures",
+    "The Food We Eat",
+    "The Four Seasons",
+    "Anandi's Rainbow",
+  ].map((name, i) => ({ id: i + 1, name }));
+
+  const hindi: Chapter[] = [
+    { id: 1, name: "मीना का परिवार", category: "इकाई 1 — परिवार" },
+    { id: 2, name: "चंदा मामा दूर के", category: "इकाई 1 — परिवार" },
+    { id: 3, name: "दादा-दादी, रीना का दिन", category: "इकाई 1 — परिवार" },
+    { id: 4, name: "रानी भी", category: "इकाई 1 — परिवार" },
+    { id: 5, name: "मुर्गी बोली कुकडूं-कूँ", category: "इकाई 2 — जीव-जगत" },
+    { id: 6, name: "मिठाई, तीन साथी", category: "इकाई 2 — जीव-जगत" },
+    { id: 7, name: "वाह, मेरे घोड़े!", category: "इकाई 2 — जीव-जगत" },
+    { id: 8, name: "ख़तरे में साँप", category: "इकाई 2 — जीव-जगत" },
+    { id: 9, name: "कबरी जबरी बकरी", category: "इकाई 2 — जीव-जगत" },
+    { id: 10, name: "आलू की सड़क", category: "इकाई 3 — हमारा खान-पान" },
+    { id: 11, name: "झूला-झूलू", category: "इकाई 3 — हमारा खान-पान" },
+    { id: 12, name: "भुट्टे", category: "इकाई 3 — हमारा खान-पान" },
+    { id: 13, name: "फूली रोटी", category: "इकाई 3 — हमारा खान-पान" },
+    { id: 14, name: "मेला", category: "इकाई 4 — त्योहार और मेले" },
+    { id: 15, name: "बरखा और मेघा", category: "इकाई 4 — त्योहार और मेले" },
+    { id: 16, name: "होली", category: "इकाई 4 — त्योहार और मेले" },
+    { id: 17, name: "जन्मदिन पर पेड़ लगाओ", category: "इकाई 4 — त्योहार और मेले" },
+    { id: 18, name: "हवा", category: "इकाई 5 — हरी-भरी दुनिया" },
+    { id: 19, name: "कितनी प्यारी है यह दुनिया", category: "इकाई 5 — हरी-भरी दुनिया" },
+    { id: 20, name: "चाँद का बच्चा", category: "इकाई 5 — हरी-भरी दुनिया" },
+    { id: 21, name: "अक्षर गीत", category: "इकाई 5 — हरी-भरी दुनिया" },
+  ];
+
+  const maths: Chapter[] = [
+    "Finding the Furry Cat! (Pre-number Concepts)",
+    "What is Long? What is Round? (Shapes)",
+    "Mango Treat (Numbers 1 to 9)",
+    "Making 10 (Numbers 10 to 20)",
+    "How Many? (Addition & Subtraction — Single Digit)",
+    "Vegetable Farm (Addition & Subtraction up to 20)",
+    "Lina's Family (Measurement)",
+    "Fun with Numbers (Numbers 21 to 99)",
+    "Utsav (Patterns)",
+    "How do I Spend my Day? (Time)",
+    "How Many Times? (Multiplication)",
+    "How Much Can We Spend? (Money)",
+    "So Many Toys (Data Handling)",
+  ].map((name, i) => ({ id: i + 1, name }));
+
+  return [
+    { id: `${p}-english`, name: "English (Mridang)", icon: "📖", color: "0 80% 55%", chapters: english },
+    { id: `${p}-hindi`, name: "हिंदी (Sarangi)", icon: "📜", color: "25 80% 50%", chapters: hindi },
+    { id: `${p}-maths`, name: "Mathematics (Joyful Mathematics)", icon: "📐", color: "195 100% 50%", chapters: maths },
+    mkSubject(`${p}-art`, "Art, Music & Movement", "🎨", "38 92% 55%", [
+      "Drawing & Doodles", "Colouring Fun", "Songs & Rhymes", "Clay & Craft",
     ]),
   ];
 }
@@ -682,7 +750,9 @@ function defenceSubjects(): Subject[] {
 const ALL_PLACEHOLDER_SUBJECTS: Subject[] = [
   ...preprimarySubjects("cbse-lkg"),
   ...preprimarySubjects("cbse-ukg"),
-  ...Array.from({ length: 2 }, (_, i) => preprimarySubjects(`cbse-class-${i + 1}`)).flat(),
+  ...class1Subjects(),
+  ...preprimarySubjects("cbse-class-2"),
+
   ...Array.from({ length: 3 }, (_, i) => juniorPrimarySubjects(`cbse-class-${i + 3}`)).flat(),
   ...Array.from({ length: 3 }, (_, i) => middleSchoolSubjects(`cbse-class-${i + 6}`)).flat(),
   ...class9Subjects(),
@@ -726,7 +796,7 @@ export function getPlaceholderChapter(subjectId: string, chapterId: number): Cha
 const cbseClassSubjectsByClass: Record<string, () => Subject[]> = {
   "lkg": () => preprimarySubjects("cbse-lkg"),
   "ukg": () => preprimarySubjects("cbse-ukg"),
-  "class-1": () => preprimarySubjects("cbse-class-1"),
+  "class-1": class1Subjects,
   "class-2": () => preprimarySubjects("cbse-class-2"),
   "class-3": () => juniorPrimarySubjects("cbse-class-3"),
   "class-4": () => juniorPrimarySubjects("cbse-class-4"),

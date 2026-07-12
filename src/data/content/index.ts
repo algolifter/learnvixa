@@ -64,7 +64,7 @@ for (const [path, mod] of Object.entries(modules)) {
   const filename = path.replace(/^\.\//, "").replace(/\.ts$/, "");
   if (filename === "index" || filename === "types") continue;
 
-  const match = filename.match(/^([a-z]+)-ch(\d+)$/i);
+  const match = filename.match(/^([a-z0-9]+)-ch(\d+)$/i);
   if (!match) continue;
 
   const rawSubject = match[1].toLowerCase();
