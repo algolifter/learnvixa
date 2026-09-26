@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "sdk_version": "3.0.4",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://inmuhwnuepexwxcqrhec.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "ai-study-command",
+      "version": "0.1.0",
+      "title": "AI Study Command"
+    },
+    "tools": [
+      {
+        "name": "get_profile",
+        "title": "Get my study profile",
+        "description": "Get the signed-in learner's study profile: name, email, and selected track (category, exam, class, stream).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_subjects",
+        "title": "List subjects",
+        "description": "List the subjects for a study track. Defaults to the signed-in learner's own track when no arguments are given.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "Track category, e.g. 'school', 'entrance' or 'government'."
+            },
+            "examId": {
+              "type": "string",
+              "description": "Exam id, e.g. 'jee', 'neet', 'upsc'."
+            },
+            "classLevel": {
+              "type": "string",
+              "description": "Class level, e.g. 'class-1', 'class-12'."
+            },
+            "stream": {
+              "type": "string",
+              "description": "Stream for senior classes, e.g. 'science'."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_chapters",
+        "title": "List chapters",
+        "description": "List the chapters of a subject, with whether each chapter's content is ready yet.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "subjectId": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Subject id returned by list_subjects."
+            }
+          },
+          "required": [
+            "subjectId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_progress",
+        "title": "Get my study progress",
+        "description": "Get the signed-in learner's saved study progress: where they left off and total time spent.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "save_progress",
+        "title": "Save study progress",
+        "description": "Save where the signed-in learner left off (subject, chapter, section) and optionally add study time.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "subjectId": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Subject id the learner is studying."
+            },
+            "chapterId": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Chapter id the learner is studying."
+            },
+            "section": {
+              "type": "string",
+              "description": "Section within the chapter, e.g. 'notes' or 'revision'."
+            },
+            "addSeconds": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Seconds of study time to add to the total."
+            }
+          },
+          "required": [
+            "subjectId",
+            "chapterId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

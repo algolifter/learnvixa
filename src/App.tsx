@@ -20,6 +20,8 @@ import SettingsPage from "./pages/SettingsPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import OAuthConsent from "./pages/OAuthConsent";
+
 import AdminPage from "./pages/AdminPage";
 import AdminContentPage from "./pages/AdminContentPage";
 import AdminRoadmapPage from "./pages/AdminRoadmapPage";
@@ -44,7 +46,7 @@ function AuthedAppContent() {
   const { user } = useAuth();
   const location = useLocation();
 
-  // Allow reset-password route even when authed
+  // Allow reset-password + OAuth consent routes even before onboarding
   if (location.pathname === "/reset-password") {
     return (
       <Routes>
@@ -52,6 +54,15 @@ function AuthedAppContent() {
       </Routes>
     );
   }
+
+  if (location.pathname === "/.lovable/oauth/consent") {
+    return (
+      <Routes>
+        <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+      </Routes>
+    );
+  }
+
 
   if (loading) return <LoadingScreen />;
 
