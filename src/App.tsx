@@ -20,6 +20,8 @@ import SettingsPage from "./pages/SettingsPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import OAuthConsent from "./pages/OAuthConsent";
+
 import AdminPage from "./pages/AdminPage";
 import AdminContentPage from "./pages/AdminContentPage";
 import AdminRoadmapPage from "./pages/AdminRoadmapPage";
