@@ -44,7 +44,7 @@ function AuthedAppContent() {
   const { user } = useAuth();
   const location = useLocation();
 
-  // Allow reset-password route even when authed
+  // Allow reset-password + OAuth consent routes even before onboarding
   if (location.pathname === "/reset-password") {
     return (
       <Routes>
@@ -52,6 +52,15 @@ function AuthedAppContent() {
       </Routes>
     );
   }
+
+  if (location.pathname === "/.lovable/oauth/consent") {
+    return (
+      <Routes>
+        <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+      </Routes>
+    );
+  }
+
 
   if (loading) return <LoadingScreen />;
 
