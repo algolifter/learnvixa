@@ -1,3 +1,4 @@
+import { cleanFakeMath } from "@/lib/cleanFakeMath";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Loader2, Trash2 } from "lucide-react";
@@ -134,7 +135,7 @@ export default function AIChatbot() {
                     {m.role === "assistant" ? (
                       <div className="prose prose-sm dark:prose-invert max-w-none [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_h2]:text-sm [&_h2]:mt-2 [&_h3]:text-sm [&_h3]:mt-2 [&_img]:rounded-lg [&_img]:my-2 [&_img]:max-w-full overflow-x-auto">
                         <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-                          {m.content}
+                          {cleanFakeMath(m.content)}
                         </ReactMarkdown>
                       </div>
                     ) : (

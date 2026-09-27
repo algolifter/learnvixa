@@ -1,3 +1,4 @@
+import { cleanFakeMath } from "@/lib/cleanFakeMath";
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { streamAI, Msg } from "@/lib/ai-stream";
@@ -103,7 +104,7 @@ export default function AIExplainer({ subject, chapter, prompt, cacheKey }: AIEx
           prose-pre:bg-muted prose-pre:rounded-lg prose-pre:p-3
           prose-blockquote:border-primary prose-blockquote:text-muted-foreground
         ">
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown>{cleanFakeMath(content)}</ReactMarkdown>
         </div>
       )}
 

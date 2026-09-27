@@ -1,3 +1,4 @@
+import { cleanFakeMath } from "@/lib/cleanFakeMath";
 import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Loader2, Volume2, VolumeX, Square } from "lucide-react";
@@ -213,7 +214,7 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
                 )}
                 {content && (
                   <div className="prose prose-sm dark:prose-invert max-w-none [&_h2]:text-base [&_h2]:font-display [&_h2]:text-foreground [&_h3]:text-sm [&_h3]:font-display">
-                    <ReactMarkdown>{content}</ReactMarkdown>
+                    <ReactMarkdown>{cleanFakeMath(content)}</ReactMarkdown>
                   </div>
                 )}
                 {loading && content && (
