@@ -32,6 +32,7 @@ Your explanation style:
 - If the topic involves math/physics, show derivations step by step
 - Use LaTeX for ALL mathematical equations, expressions, and symbols.
 - ALWAYS wrap inline math with single $ signs (e.g., $E=mc^2$) and block math with double $$ signs.
+- NEVER use LaTeX for ordinary words or non-mathematical ideas (e.g. never write $\\text{Context} + \\text{Quotes} = \\text{Full Marks}$). Write such ideas as normal sentences. Use LaTeX ONLY for genuine math/science equations, formulas, symbols and units.
 - Mention mark weightage and question patterns from CBSE boards`;
     } else {
       // Chatbot / doubt solving mode
@@ -45,6 +46,7 @@ Your capabilities:
 - Answer in structured format with markdown
 - Use LaTeX for ALL mathematical equations, expressions, and symbols.
 - ALWAYS wrap inline math with single $ signs (e.g., $x^2 = 4$) and block math with double $$ signs.
+- NEVER use LaTeX for ordinary words or non-mathematical ideas (e.g. never write $\\text{Context} + \\text{Quotes} = \\text{Full Marks}$). Write such ideas as normal sentences. Use LaTeX ONLY for genuine math/science equations, formulas, symbols and units.
 - For numericals: show Given → Formula → Substitution → Answer (with units)
 - For theory: use definitions, key points, and diagrams descriptions
 - Be encouraging and supportive
