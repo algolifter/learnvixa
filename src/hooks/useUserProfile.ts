@@ -9,7 +9,13 @@ export interface UserProfile {
   examId?: string;
   classLevel?: string;
   stream?: string;
+  age?: string;
 }
+
+const LOCAL_KEY = "learnvixa-guest-profile";
+const readLocal = (): UserProfile | null => {
+  try { const v = localStorage.getItem(LOCAL_KEY); return v ? JSON.parse(v) : null; } catch { return null; }
+};
 
 export function useUserProfile() {
   const { user, loading: authLoading } = useAuth();
@@ -19,7 +25,7 @@ export function useUserProfile() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
-      setProfile(null);
+      setProfile(readLocal());
       setLoading(false);
       return;
     }
@@ -63,8 +69,8 @@ export function useUserProfile() {
   };
 
   const saveProfile = useCallback(async (newProfile: UserProfile) => {
-    if (!user) return;
     setProfile(newProfile);
+    if (!user) { localStorage.setItem(LOCAL_KEY, JSON.stringify(newProfile)); return; }
     await supabase
       .from("user_profiles")
       .upsert(
@@ -82,8 +88,8 @@ export function useUserProfile() {
   }, [user]);
 
   const clearProfile = useCallback(async () => {
-    if (!user) return;
     setProfile(null);
+    if (!user) { localStorage.removeItem(LOCAL_KEY); return; }
     await supabase
       .from("user_profiles")
       .update({ category: null, exam_id: null, class_level: null, stream: null } as any)

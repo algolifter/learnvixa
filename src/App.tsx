@@ -18,6 +18,7 @@ import QuickRevisionPage from "./pages/QuickRevisionPage";
 import BoardPredictorPage from "./pages/BoardPredictorPage";
 import SettingsPage from "./pages/SettingsPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import QuickStartPage from "./pages/QuickStartPage";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import OAuthConsent from "./pages/OAuthConsent";
@@ -66,6 +67,8 @@ function AuthedAppContent() {
 
   if (loading) return <LoadingScreen />;
 
+  if (!profile && !user) return <QuickStartPage onComplete={saveProfile} />;
+
   if (!profile) {
     return (
       <OnboardingPage
@@ -106,6 +109,7 @@ function Root() {
 
   useEffect(() => {
     if (loading || user || devTriedRef.current) return;
+    return; // Sign-in disabled for quick demo access
     if (!isDevEnvironment()) return;
     devTriedRef.current = true;
     setDevAuthing(true);
@@ -141,7 +145,6 @@ function Root() {
     );
   }
 
-  if (!user) return <AuthPage />;
 
   return <AuthedAppContent />;
 }
