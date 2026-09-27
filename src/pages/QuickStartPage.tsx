@@ -57,7 +57,7 @@ export default function QuickStartPage({ onComplete }: Props) {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 animate-fade-in">
-      <form onSubmit={submit} className="glass-card w-full max-w-md p-6 space-y-4 rounded-2xl">
+      <form onSubmit={submit} className="glass w-full max-w-md p-6 space-y-4 rounded-2xl">
         <div className="text-center space-y-1">
           <h1 className="font-display text-2xl font-bold text-primary">LearnVixa</h1>
           <p className="text-sm text-muted-foreground">Tell us a little about yourself</p>
