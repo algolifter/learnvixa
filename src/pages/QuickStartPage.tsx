@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cbseClasses, streams, entranceExamCategories, governmentExams } from "@/data/educationData";
+import { cbseClasses, streams, entranceExamCategories, governmentExams, mainCategories } from "@/data/educationData";
 import type { UserProfile } from "@/hooks/useUserProfile";
 import defaultLogo from "@/assets/learnvixa-logo.png";
 
@@ -14,6 +14,15 @@ const selectCls =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 const entranceExams = entranceExamCategories.flatMap((c) => c.subcategories ?? []);
+
+const govSubExams: Record<string, string[]> = {
+  upsc: ["UPSC Civil Services (IAS/IPS)", "UPSC CAPF", "UPSC ESE"],
+  ssc: ["SSC CGL", "SSC CHSL", "SSC MTS", "SSC GD"],
+  psc: ["Kerala PSC", "State PSC Exams"],
+  banking: ["IBPS PO", "IBPS Clerk", "SBI PO", "SBI Clerk", "RBI Grade B"],
+  railways: ["RRB NTPC", "RRB Group D", "RRB JE"],
+  defence: ["NDA", "CDS", "AFCAT"],
+};
 
 const LOGO_KEY = "learnvixa-custom-logo";
 
@@ -30,8 +39,6 @@ export default function QuickStartPage({ onComplete }: Props) {
       return null;
     }
   });
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const logoSrc = customLogo || defaultLogo;
 
   useEffect(() => {
@@ -39,29 +46,8 @@ export default function QuickStartPage({ onComplete }: Props) {
     return () => clearTimeout(t);
   }, []);
 
-  const handleLogoFile = (file: File | undefined) => {
-    if (!file || !file.type.startsWith("image/")) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      setCustomLogo(dataUrl);
-      try {
-        localStorage.setItem(LOGO_KEY, dataUrl);
-      } catch {
-        // image too large for localStorage — still preview for this session
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const resetLogo = () => {
-    setCustomLogo(null);
-    try {
-      localStorage.removeItem(LOGO_KEY);
-    } catch {
-      // ignore
-    }
-  };
+  const [step, setStep] = useState<"info" | "category" | "school" | "entrance" | "government" | "gov-exam">("info");
+  const [govCat, setGovCat] = useState("");
 
   if (showSplash) {
     return (
@@ -72,86 +58,133 @@ export default function QuickStartPage({ onComplete }: Props) {
     );
   }
 
-  const canContinue = name.trim() && classLevel;
+  const base = () => ({ name: name.trim(), email: "", age: age || undefined });
+  const selectedClass = cbseClasses.find((c) => c.id === classLevel);
 
-  const submit = (e: React.FormEvent) => {
+  const finishSchool = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canContinue) return;
-    const base = { name: name.trim(), email: "", age: age || undefined };
-    if (course.startsWith("entrance:")) {
-      onComplete({ ...base, category: "entrance", examId: course.slice(9), classLevel });
-    } else if (course.startsWith("government:")) {
-      onComplete({ ...base, category: "government", examId: course.slice(11), classLevel });
-    } else {
-      onComplete({
-        ...base,
-        category: "school",
-        classLevel,
-        stream: course === "general" ? undefined : course,
-      });
-    }
+    if (!classLevel) return;
+    onComplete({
+      ...base(),
+      category: "school",
+      classLevel,
+      stream: selectedClass?.hasStreams && course !== "general" ? course : undefined,
+    });
   };
+
+  const back = (to: typeof step) => (
+    <Button type="button" variant="ghost" size="sm" onClick={() => setStep(to)}>← Back</Button>
+  );
+
+  const card = "w-full text-left rounded-xl border border-border bg-background/60 p-4 hover:border-primary transition-colors";
+
+  const govCategory = governmentExams.find((g) => g.id === govCat);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 animate-fade-in">
-      <form onSubmit={submit} className="glass w-full max-w-md p-6 space-y-4 rounded-2xl">
+      <div className="glass w-full max-w-md p-6 space-y-4 rounded-2xl">
         <div className="text-center space-y-2">
           <img src={logoSrc} alt="LearnVixa logo" className="w-20 h-20 object-contain mx-auto" />
           <h1 className="font-display text-2xl font-bold text-primary">LearnVixa</h1>
           <p className="text-sm text-muted-foreground">Tell us a little about yourself</p>
-          <div className="flex items-center justify-center gap-2 pt-1">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleLogoFile(e.target.files?.[0])}
-            />
-            <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-              Upload logo
-            </Button>
-            {customLogo && (
-              <Button type="button" variant="ghost" size="sm" onClick={resetLogo}>
-                Reset
-              </Button>
-            )}
-          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="qs-name">Name</Label>
-          <Input id="qs-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="qs-age">Age</Label>
-          <Input id="qs-age" type="number" min={3} max={99} value={age} onChange={(e) => setAge(e.target.value)} placeholder="Your age" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="qs-class">Class</Label>
-          <select id="qs-class" className={selectCls} value={classLevel} onChange={(e) => setClassLevel(e.target.value)} required>
-            <option value="">Select your class</option>
-            {cbseClasses.map((c) => (
-              <option key={c.id} value={c.id}>{c.label}</option>
+
+        {step === "info" && (
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (name.trim()) setStep("category"); }}>
+            <div className="space-y-2">
+              <Label htmlFor="qs-name">Name</Label>
+              <Input id="qs-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="qs-age">Age (optional)</Label>
+              <Input id="qs-age" type="number" min={3} max={100} value={age} onChange={(e) => setAge(e.target.value)} placeholder="Your age" />
+            </div>
+            <Button type="submit" className="w-full" disabled={!name.trim()}>Next</Button>
+          </form>
+        )}
+
+        {step === "category" && (
+          <div className="space-y-3">
+            <p className="text-sm font-medium">Choose your education category</p>
+            {mainCategories.map((c) => (
+              <button key={c.id} type="button" className={card} onClick={() => setStep(c.id as typeof step)}>
+                <span className="font-semibold">{c.name}</span>
+              </button>
             ))}
-            <option value="graduate">Graduate / Other</option>
-          </select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="qs-course">Course / Stream</Label>
-          <select id="qs-course" className={selectCls} value={course} onChange={(e) => setCourse(e.target.value)}>
-            <option value="general">General (School)</option>
-            <optgroup label="Streams">
-              {streams.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </optgroup>
-            <optgroup label="Entrance Exams">
-              {entranceExams.map((x) => <option key={x.id} value={`entrance:${x.id}`}>{x.name}</option>)}
-            </optgroup>
-            <optgroup label="Government Exams">
-              {governmentExams.map((x) => <option key={x.id} value={`government:${x.id}`}>{x.name}</option>)}
-            </optgroup>
-          </select>
-        </div>
-        <Button type="submit" className="w-full" disabled={!canContinue}>Continue</Button>
-      </form>
+            {back("info")}
+          </div>
+        )}
+
+        {step === "school" && (
+          <form className="space-y-4" onSubmit={finishSchool}>
+            <div className="space-y-2">
+              <Label htmlFor="qs-class">Class</Label>
+              <select id="qs-class" className={selectCls} value={classLevel} onChange={(e) => { setClassLevel(e.target.value); setCourse("general"); }} required>
+                <option value="">Select your class</option>
+                {cbseClasses.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+              </select>
+            </div>
+            {selectedClass?.hasStreams && (
+              <div className="space-y-2">
+                <Label htmlFor="qs-course">Course / Stream</Label>
+                <select id="qs-course" className={selectCls} value={course} onChange={(e) => setCourse(e.target.value)}>
+                  <option value="general">General School Education</option>
+                  {streams.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              {back("category")}
+              <Button type="submit" disabled={!classLevel}>Continue</Button>
+            </div>
+          </form>
+        )}
+
+        {step === "entrance" && (
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+            <p className="text-sm font-medium">Choose your entrance exam</p>
+            {entranceExamCategories.map((cat) => (
+              <div key={cat.id} className="space-y-2">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">{cat.name}</p>
+                {(cat.subcategories ?? []).map((x) => (
+                  <button key={x.id} type="button" className={card}
+                    onClick={() => onComplete({ ...base(), category: "entrance", examId: x.id, classLevel: "class-12" })}>
+                    <span className="font-semibold">{x.name}</span>
+                    {x.description && <span className="block text-xs text-muted-foreground">{x.description}</span>}
+                  </button>
+                ))}
+              </div>
+            ))}
+            {back("category")}
+          </div>
+        )}
+
+        {step === "government" && (
+          <div className="space-y-3">
+            <p className="text-sm font-medium">Choose a government exam category</p>
+            {governmentExams.map((g) => (
+              <button key={g.id} type="button" className={card} onClick={() => { setGovCat(g.id); setStep("gov-exam"); }}>
+                <span className="font-semibold">{g.name}</span>
+                {g.description && <span className="block text-xs text-muted-foreground">{g.description}</span>}
+              </button>
+            ))}
+            {back("category")}
+          </div>
+        )}
+
+        {step === "gov-exam" && govCategory && (
+          <div className="space-y-3">
+            <p className="text-sm font-medium">{govCategory.name} exams</p>
+            {(govSubExams[govCat] ?? [govCategory.name]).map((ex) => (
+              <button key={ex} type="button" className={card}
+                onClick={() => onComplete({ ...base(), category: "government", examId: govCat, classLevel: "graduate" })}>
+                <span className="font-semibold">{ex}</span>
+              </button>
+            ))}
+            {back("government")}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
