@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cbseClasses, streams, entranceExamCategories, governmentExams } from "@/data/educationData";
 import type { UserProfile } from "@/hooks/useUserProfile";
-import defaultLogo from "@/assets/learnvixa-logo.png.asset.json";
+import defaultLogo from "@/assets/learnvixa-logo.png";
 
 interface Props {
   onComplete: (p: UserProfile) => void;
