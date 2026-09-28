@@ -32,7 +32,7 @@ export default function QuickStartPage({ onComplete }: Props) {
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const logoSrc = customLogo || defaultLogo.url;
+  const logoSrc = customLogo || defaultLogo;
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 1200);
