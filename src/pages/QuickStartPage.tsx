@@ -13,7 +13,6 @@ interface Props {
 const selectCls =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
-const entranceExams = entranceExamCategories.flatMap((c) => c.subcategories ?? []);
 
 const govSubExams: Record<string, string[]> = {
   upsc: ["UPSC Civil Services (IAS/IPS)", "UPSC CAPF", "UPSC ESE"],
@@ -32,7 +31,7 @@ export default function QuickStartPage({ onComplete }: Props) {
   const [age, setAge] = useState("");
   const [classLevel, setClassLevel] = useState("");
   const [course, setCourse] = useState("general");
-  const [customLogo, setCustomLogo] = useState<string | null>(() => {
+  const [customLogo] = useState<string | null>(() => {
     try {
       return localStorage.getItem(LOGO_KEY);
     } catch {
