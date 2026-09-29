@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cbseClasses, streams, entranceExamCategories, governmentExams, mainCategories } from "@/data/educationData";
 import type { UserProfile } from "@/hooks/useUserProfile";
+import { GraduationCap, ClipboardCheck, Landmark, Check } from "lucide-react";
 import defaultLogo from "@/assets/learnvixa-logo.png";
 
 interface Props {
@@ -23,6 +24,17 @@ const govSubExams: Record<string, string[]> = {
   defence: ["NDA", "CDS", "AFCAT"],
 };
 
+const categoryIcons: Record<string, typeof GraduationCap> = {
+  school: GraduationCap,
+  entrance: ClipboardCheck,
+  government: Landmark,
+};
+
+const boardsFor = (cls: string) =>
+  cls === "class-12"
+    ? ["CBSE", "ISC (CISCE)", "Kerala State Board (HSE)", "Other State Board", "Other / Not Listed"]
+    : ["CBSE", "ICSE (CISCE)", "Kerala State Board (SSLC)", "Other State Board", "Other / Not Listed"];
+
 const LOGO_KEY = "learnvixa-custom-logo";
 
 export default function QuickStartPage({ onComplete }: Props) {
@@ -31,6 +43,7 @@ export default function QuickStartPage({ onComplete }: Props) {
   const [age, setAge] = useState("");
   const [classLevel, setClassLevel] = useState("");
   const [course, setCourse] = useState("general");
+  const [board, setBoard] = useState("");
   const [customLogo] = useState<string | null>(() => {
     try {
       return localStorage.getItem(LOGO_KEY);
@@ -45,7 +58,7 @@ export default function QuickStartPage({ onComplete }: Props) {
     return () => clearTimeout(t);
   }, []);
 
-  const [step, setStep] = useState<"info" | "category" | "school" | "entrance" | "government" | "gov-exam">("info");
+  const [step, setStep] = useState<"info" | "category" | "school" | "board" | "entrance" | "government" | "gov-exam">("info");
   const [govCat, setGovCat] = useState("");
 
   if (showSplash) {
@@ -60,14 +73,18 @@ export default function QuickStartPage({ onComplete }: Props) {
   const base = () => ({ name: name.trim(), email: "", age: age || undefined });
   const selectedClass = cbseClasses.find((c) => c.id === classLevel);
 
+  const needsBoard = classLevel === "class-10" || classLevel === "class-12";
   const finishSchool = (e: React.FormEvent) => {
     e.preventDefault();
     if (!classLevel) return;
+    if (step === "school" && needsBoard) { setStep("board"); return; }
+    if (needsBoard && !board) return;
     onComplete({
       ...base(),
       category: "school",
       classLevel,
       stream: selectedClass?.hasStreams && course !== "general" ? course : undefined,
+      board: needsBoard ? board : undefined,
     });
   };
 
@@ -76,6 +93,10 @@ export default function QuickStartPage({ onComplete }: Props) {
   );
 
   const card = "w-full text-left rounded-xl border border-border bg-background/60 p-4 hover:border-primary transition-colors";
+  const pick = (active: boolean) =>
+    `relative rounded-xl border p-3 text-center text-sm font-semibold transition-all duration-200 hover:border-primary hover:-translate-y-0.5 ${
+      active ? "border-primary bg-primary/10 text-primary ring-1 ring-primary" : "border-border bg-background/60"
+    }`;
 
   const govCategory = governmentExams.find((g) => g.id === govCat);
 
@@ -106,9 +127,20 @@ export default function QuickStartPage({ onComplete }: Props) {
           <div className="space-y-3">
             <p className="text-sm font-medium">Choose your education category</p>
             {mainCategories.map((c) => (
-              <button key={c.id} type="button" className={card} onClick={() => setStep(c.id as typeof step)}>
-                <span className="font-semibold">{c.name}</span>
-              </button>
+              (() => {
+                const Icon = categoryIcons[c.id] ?? GraduationCap;
+                return (
+                  <button key={c.id} type="button" className={`${card} group flex items-center gap-4 hover:bg-primary/5`} onClick={() => setStep(c.id as typeof step)}>
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span>
+                      <span className="block font-semibold">{c.name}</span>
+                      {c.description && <span className="block text-xs text-muted-foreground">{c.description}</span>}
+                    </span>
+                  </button>
+                );
+              })()
             ))}
             {back("info")}
           </div>
@@ -117,11 +149,17 @@ export default function QuickStartPage({ onComplete }: Props) {
         {step === "school" && (
           <form className="space-y-4" onSubmit={finishSchool}>
             <div className="space-y-2">
-              <Label htmlFor="qs-class">Class</Label>
-              <select id="qs-class" className={selectCls} value={classLevel} onChange={(e) => { setClassLevel(e.target.value); setCourse("general"); }} required>
-                <option value="">Select your class</option>
-                {cbseClasses.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-              </select>
+              <p className="text-sm font-medium">Select your class</p>
+              <div role="radiogroup" aria-label="Class" className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[45vh] overflow-y-auto p-1">
+                {cbseClasses.map((c) => (
+                  <button key={c.id} type="button" role="radio" aria-checked={classLevel === c.id}
+                    className={pick(classLevel === c.id)}
+                    onClick={() => { if (c.id !== classLevel) { setClassLevel(c.id); setCourse("general"); setBoard(""); } }}>
+                    {c.label}
+                    {classLevel === c.id && <Check className="absolute top-1 right-1 h-3 w-3" />}
+                  </button>
+                ))}
+              </div>
             </div>
             {selectedClass?.hasStreams && (
               <div className="space-y-2">
@@ -135,6 +173,27 @@ export default function QuickStartPage({ onComplete }: Props) {
             <div className="flex items-center justify-between">
               {back("category")}
               <Button type="submit" disabled={!classLevel}>Continue</Button>
+            </div>
+          </form>
+        )}
+
+        {step === "board" && (
+          <form className="space-y-4" onSubmit={finishSchool}>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Select your board ({selectedClass?.label})</p>
+              <div role="radiogroup" aria-label="Board" className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {boardsFor(classLevel).map((b) => (
+                  <button key={b} type="button" role="radio" aria-checked={board === b}
+                    className={pick(board === b)} onClick={() => setBoard(b)}>
+                    {b}
+                    {board === b && <Check className="absolute top-1 right-1 h-3 w-3" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              {back("school")}
+              <Button type="submit" disabled={!board}>Continue</Button>
             </div>
           </form>
         )}
