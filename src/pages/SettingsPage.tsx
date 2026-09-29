@@ -46,8 +46,14 @@ export default function SettingsPage() {
   };
 
   const handleLogout = async () => {
-    await signOut();
-    toast.success("Signed out");
+    // Clear only this session's onboarding state, then restart from the splash.
+    try {
+      localStorage.removeItem("learnvixa-guest-profile");
+      localStorage.removeItem("learnvixa-ai-context");
+      localStorage.removeItem("learnvixa-continue-studying");
+    } catch { /* ignore */ }
+    try { await signOut(); } catch { /* ignore */ }
+    window.location.replace("/");
   };
 
   return (

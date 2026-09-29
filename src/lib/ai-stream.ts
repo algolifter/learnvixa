@@ -1,5 +1,10 @@
 export type Msg = { role: "user" | "assistant"; content: string };
 
+export const AI_CONTEXT_KEY = "learnvixa-ai-context";
+const readContext = () => {
+  try { const v = localStorage.getItem(AI_CONTEXT_KEY); return v ? JSON.parse(v) : undefined; } catch { return undefined; }
+};
+
 const AI_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-study`;
 
 export async function streamAI({
@@ -28,7 +33,7 @@ export async function streamAI({
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ messages, mode, subject, chapter }),
+      body: JSON.stringify({ messages, mode, subject, chapter, context: readContext() }),
       signal,
     });
 
@@ -114,7 +119,7 @@ export async function streamAI({
 
     onDone();
   } catch (e: any) {
-    if (e.name === "AbortError") return;
+    if (e.name === "AbortError") { onDone(); return; }
     onError(e.message || "Connection failed");
   }
 }
