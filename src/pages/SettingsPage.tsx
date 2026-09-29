@@ -50,7 +50,6 @@ export default function SettingsPage() {
     try {
       localStorage.removeItem("learnvixa-guest-profile");
       localStorage.removeItem("learnvixa-ai-context");
-      localStorage.removeItem("learnvixa-continue-studying");
     } catch { /* ignore */ }
     try { await signOut(); } catch { /* ignore */ }
     window.location.replace("/");
