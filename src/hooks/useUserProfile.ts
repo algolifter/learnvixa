@@ -10,6 +10,7 @@ export interface UserProfile {
   classLevel?: string;
   stream?: string;
   age?: string;
+  board?: string;
 }
 
 const LOCAL_KEY = "learnvixa-guest-profile";
@@ -70,6 +71,12 @@ export function useUserProfile() {
 
   const saveProfile = useCallback(async (newProfile: UserProfile) => {
     setProfile(newProfile);
+    try {
+      localStorage.setItem("learnvixa-ai-context", JSON.stringify({
+        category: newProfile.category, classLevel: newProfile.classLevel,
+        board: newProfile.board, stream: newProfile.stream, examId: newProfile.examId,
+      }));
+    } catch { /* ignore */ }
     if (!user) { localStorage.setItem(LOCAL_KEY, JSON.stringify(newProfile)); return; }
     await supabase
       .from("user_profiles")

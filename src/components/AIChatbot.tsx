@@ -23,41 +23,57 @@ export default function AIChatbot() {
     }
   }, [messages, open]);
 
-  const send = async () => {
-    const text = input.trim();
-    if (!text || loading) return;
-    setInput("");
+  const [error, setError] = useState<string | null>(null);
 
-    const userMsg: Msg = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
+  const run = async (history: Msg[]) => {
+    setError(null);
     setLoading(true);
-
+    abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
     let assistantSoFar = "";
+    let started = false;
     const upsert = (chunk: string) => {
       assistantSoFar += chunk;
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === "assistant") {
-          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
-        }
-        return [...prev, { role: "assistant", content: assistantSoFar }];
+      setMessages(() => {
+        const next = [...history];
+        next.push({ role: "assistant", content: assistantSoFar });
+        return next;
       });
+      started = true;
     };
 
-    await streamAI({
-      messages: [...messages, userMsg],
-      mode: "chatbot",
-      onDelta: upsert,
-      onDone: () => setLoading(false),
-      onError: (err) => {
-        upsert(`\n\n⚠️ ${err}`);
-        setLoading(false);
-      },
-      signal: controller.signal,
-    });
+    try {
+      await streamAI({
+        messages: history,
+        mode: "chatbot",
+        onDelta: upsert,
+        onDone: () => {},
+        onError: (err) => {
+          // Drop any partial answer so a retry starts clean
+          if (started) setMessages(history);
+          setError(err || "Something went wrong.");
+        },
+        signal: controller.signal,
+      });
+    } finally {
+      if (abortRef.current === controller) setLoading(false);
+    }
+  };
+
+  const send = async () => {
+    const text = input.trim();
+    if (!text || loading) return;
+    setInput("");
+    const history: Msg[] = [...messages, { role: "user", content: text }];
+    setMessages(history);
+    await run(history);
+  };
+
+  const retry = () => {
+    if (loading) return;
+    if (messages[messages.length - 1]?.role === "user") run(messages);
   };
 
   return (
@@ -91,10 +107,10 @@ export default function AIChatbot() {
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/50">
               <div>
                 <h3 className="font-display text-sm font-bold text-foreground">AI Study Assistant</h3>
-                <p className="text-xs text-muted-foreground">Ask any doubt · CBSE Class 12</p>
+                <p className="text-xs text-muted-foreground">Ask any doubt</p>
               </div>
               <div className="flex gap-1">
-                <button onClick={() => setMessages([])} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground" title="Clear chat">
+                <button onClick={() => { abortRef.current?.abort(); setMessages([]); setError(null); setLoading(false); }} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground" title="Clear chat">
                   <Trash2 className="w-4 h-4" />
                 </button>
                 <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
@@ -149,6 +165,14 @@ export default function AIChatbot() {
                   <div className="bg-muted rounded-xl px-3 py-2">
                     <Loader2 className="w-4 h-4 animate-spin text-primary" />
                   </div>
+                </div>
+              )}
+              {error && !loading && (
+                <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive space-y-2">
+                  <p>Couldn't get an answer: {error}</p>
+                  <button onClick={retry} className="px-2.5 py-1 rounded-full border border-destructive/40 hover:bg-destructive/10">
+                    Try again
+                  </button>
                 </div>
               )}
               <div ref={bottomRef} />
