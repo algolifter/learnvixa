@@ -95,7 +95,7 @@ export default function QuickStartPage({ onComplete }: Props) {
   const card = "w-full text-left rounded-xl border border-border bg-background/60 p-4 hover:border-primary transition-colors";
   const pick = (active: boolean) =>
     `relative rounded-xl border p-3 text-center text-sm font-semibold transition-all duration-200 hover:border-primary hover:-translate-y-0.5 ${
-      active ? "border-primary bg-primary/10 text-primary ring-1 ring-primary" : "border-border bg-background/60"
+      active ? "border-primary bg-primary/15 text-primary ring-2 ring-primary shadow-[0_0_12px_hsl(var(--primary)/0.35)]" : "border-border bg-background/60"
     }`;
 
   const govCategory = governmentExams.find((g) => g.id === govCat);
