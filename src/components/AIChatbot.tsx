@@ -167,6 +167,14 @@ export default function AIChatbot() {
                   </div>
                 </div>
               )}
+              {error && !loading && (
+                <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive space-y-2">
+                  <p>Couldn't get an answer: {error}</p>
+                  <button onClick={retry} className="px-2.5 py-1 rounded-full border border-destructive/40 hover:bg-destructive/10">
+                    Try again
+                  </button>
+                </div>
+              )}
               <div ref={bottomRef} />
             </div>
 
