@@ -10,48 +10,45 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, mode, subject, chapter } = await req.json();
+    const { messages, mode, subject, chapter, context } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    const ctx = (context && typeof context === "object") ? context : {};
+    const clean = (v: unknown) => typeof v === "string" ? v.slice(0, 80).replace(/[\n\r"`]/g, " ") : "";
+    const cls = clean(ctx.classLevel).replace("class-", "Class ").replace("lkg", "LKG").replace("ukg", "UKG");
+    const board = clean(ctx.board);
+    const stream = clean(ctx.stream);
+    const exam = clean(ctx.examId);
+    const category = clean(ctx.category);
+    const learner = category === "entrance" && exam
+      ? `a student preparing for the ${exam.toUpperCase()} entrance exam`
+      : category === "government" && exam
+      ? `a candidate preparing for ${exam.toUpperCase()} government exams`
+      : `a ${board || "CBSE"} ${cls || "school"} student${stream ? ` (${stream} stream)` : ""}`;
+
+    const formatRules = `
+Formatting and quality rules (follow strictly):
+- Use markdown: ## for main sections, ### for sub-sections, bullet or numbered lists for steps.
+- Match the depth and vocabulary to the student's level; be accurate to the ${board || "CBSE"} syllabus where relevant.
+- Explain difficult ideas step by step and give at least one relevant example.
+- Do NOT repeat the same point, heading or sentence. No filler, no generic motivational padding.
+- Use LaTeX ONLY for genuine math/science: equations, variables, formulas, chemical equations, units. Inline: $...$, block: $$...$$.
+- NEVER put ordinary words or ideas in LaTeX. Never write things like $\\text{Context} + \\text{Quotes} = \\text{Full Marks}$ — write "Understanding the context and using textual quotes help you score full marks." instead.
+- Never use \\text{} to write whole sentences. For English, History and other theory subjects, normally use no LaTeX at all.
+- Stay on the requested subject and chapter.`;
+
     let systemPrompt = "";
-
     if (mode === "teacher") {
-      systemPrompt = `You are an expert CBSE Class 12 ${subject || ""} teacher explaining "${chapter || "this topic"}" to a student.
-
-Your explanation style:
-- Start with a simple analogy or real-world connection
-- Break down the concept step-by-step like a patient teacher
-- Use clear headings with markdown (## for sections)
-- Include key formulas in bold
-- Give solved examples with step-by-step working
-- Highlight common mistakes students make
-- End with a brief exam-focused summary
-- Use bullet points for clarity
-- Keep tone encouraging and exam-focused
-- If the topic involves math/physics, show derivations step by step
-- Use LaTeX for ALL mathematical equations, expressions, and symbols.
-- ALWAYS wrap inline math with single $ signs (e.g., $E=mc^2$) and block math with double $$ signs.
-- NEVER use LaTeX for ordinary words or non-mathematical ideas (e.g. never write $\\text{Context} + \\text{Quotes} = \\text{Full Marks}$). Write such ideas as normal sentences. Use LaTeX ONLY for genuine math/science equations, formulas, symbols and units.
-- Mention mark weightage and question patterns from CBSE boards`;
+      systemPrompt = `You are an expert, patient teacher explaining "${clean(chapter) || "this topic"}"${subject ? ` in ${clean(subject)}` : ""} to ${learner}.
+Structure: a short real-world hook, core concepts step by step, key formulas or facts (in bold), solved examples where suitable, common mistakes, and a short exam-focused summary.
+${formatRules}`;
     } else {
-      // Chatbot / doubt solving mode
-      systemPrompt = `You are an advanced AI study assistant for CBSE Class 12 students. You help with Mathematics, Physics, Chemistry, and English Core.
-
-Your capabilities:
-- Explain concepts clearly with examples
-- Solve numerical problems step-by-step showing all working
-- Provide CBSE exam-focused answers
-- Help with derivations, proofs, and chemical reactions
-- Answer in structured format with markdown
-- Use LaTeX for ALL mathematical equations, expressions, and symbols.
-- ALWAYS wrap inline math with single $ signs (e.g., $x^2 = 4$) and block math with double $$ signs.
-- NEVER use LaTeX for ordinary words or non-mathematical ideas (e.g. never write $\\text{Context} + \\text{Quotes} = \\text{Full Marks}$). Write such ideas as normal sentences. Use LaTeX ONLY for genuine math/science equations, formulas, symbols and units.
-- For numericals: show Given → Formula → Substitution → Answer (with units)
-- For theory: use definitions, key points, and diagrams descriptions
-- Be encouraging and supportive
-- If asked about a specific chapter, provide board-exam relevant content
-- Always mention if a topic is high-weightage for boards`;
+      systemPrompt = `You are a friendly AI study assistant helping ${learner}. Answer the student's question directly and clearly.
+- For numericals: Given → Formula → Substitution → Answer (with units).
+- For theory: definition, key points, and an example.
+- Keep answers focused; longer only when the question needs it.
+${formatRules}`;
     }
     const lastMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
     const isImageRequest = /generate.*image|create.*image|draw\s|show.*image|picture of/i.test(lastMessage);
