@@ -63,6 +63,9 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
       URL.revokeObjectURL(audioRef.current.src);
       audioRef.current = null;
     }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     setSpeaking(false);
     setAudioLoading(false);
   }, []);
@@ -92,7 +95,10 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
         }
       );
 
-      if (!response.ok) throw new Error("Voice generation failed");
+      if (!response.ok) {
+        const details = await response.text().catch(() => "");
+        throw new Error(`Voice generation failed [${response.status}]: ${details}`);
+      }
 
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -111,7 +117,22 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
       await audio.play();
       setSpeaking(true);
     } catch (err) {
-      console.error("TTS error:", err);
+      console.warn("TTS unavailable, using browser voice:", err);
+      // Fallback: built-in browser speech so the button still works
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        const plain = textToSpeak
+          .replace(/\$\$?[^$]*\$\$?/g, " ")
+          .replace(/[#*`>_\[\]()]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(plain);
+        utter.lang = "en-IN";
+        utter.onend = () => setSpeaking(false);
+        utter.onerror = () => setSpeaking(false);
+        window.speechSynthesis.speak(utter);
+        setSpeaking(true);
+      }
     } finally {
       setAudioLoading(false);
     }
