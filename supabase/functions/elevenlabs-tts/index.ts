@@ -65,10 +65,18 @@ serve(async (req) => {
     if (!response.ok) {
       const errText = await response.text();
       console.error("ElevenLabs TTS error:", response.status, errText);
-      return new Response(JSON.stringify({ error: "Voice generation failed" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      const quota = errText.includes("quota_exceeded");
+      return new Response(
+        JSON.stringify({
+          error: quota ? "Voice credits used up" : "Voice generation failed",
+          status: response.status,
+          details: errText,
+        }),
+        {
+          status: quota ? 402 : response.status,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
     return new Response(response.body, {
