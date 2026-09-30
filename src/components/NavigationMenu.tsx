@@ -1,3 +1,4 @@
+import { useSafeBack } from "@/hooks/useSafeBack";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, Home, BookOpen, Wind, Zap, Sparkles, RotateCcw, ChevronRight, Settings, ArrowLeft } from "lucide-react";
@@ -21,6 +22,7 @@ export default function NavigationMenu() {
   const [open, setOpen] = useState(false);
   const [expandedSubject, setExpandedSubject] = useState<string | null>(null);
   const navigate = useNavigate();
+  const goBack = useSafeBack("/");
   const location = useLocation();
   const { profile } = useUserProfile();
 
@@ -45,7 +47,7 @@ export default function NavigationMenu() {
       {/* Back button - shown on all pages except home */}
       {!isHome && (
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => goBack()}
           className="fixed top-4 left-4 z-50 bg-card/90 backdrop-blur border border-border rounded-xl p-2.5 hover:bg-muted/80 transition-colors shadow-sm"
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />

@@ -1,3 +1,4 @@
+import { useSafeBack } from "@/hooks/useSafeBack";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -19,6 +20,7 @@ interface ProfileRow {
 
 export default function AdminPage() {
   const navigate = useNavigate();
+  const goBack = useSafeBack("/");
   const { user } = useAuth();
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
   const [profiles, setProfiles] = useState<ProfileRow[]>([]);
@@ -59,7 +61,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-3 mb-8">
-          <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-card border border-border hover:bg-muted transition-colors">
+          <button onClick={() => goBack()} className="p-2 rounded-xl bg-card border border-border hover:bg-muted transition-colors">
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <div>
