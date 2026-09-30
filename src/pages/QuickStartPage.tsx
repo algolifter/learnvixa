@@ -41,6 +41,7 @@ export default function QuickStartPage({ onComplete }: Props) {
   const [showSplash, setShowSplash] = useState(true);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
+  const [infoError, setInfoError] = useState("");
   const [classLevel, setClassLevel] = useState("");
   const [course, setCourse] = useState("general");
   const [board, setBoard] = useState("");
@@ -110,16 +111,31 @@ export default function QuickStartPage({ onComplete }: Props) {
         </div>
 
         {step === "info" && (
-          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (name.trim()) setStep("category"); }}>
+          <form
+            className="space-y-4"
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault();
+              const trimmed = age.trim();
+              const n = Number(trimmed);
+              if (!name.trim()) return setInfoError("Please enter your name.");
+              if (!trimmed) return setInfoError("Please enter your age.");
+              if (!/^\d+$/.test(trimmed) || !Number.isInteger(n) || n < 3 || n > 100)
+                return setInfoError("Please enter a valid age between 3 and 100.");
+              setInfoError("");
+              setStep("category");
+            }}
+          >
             <div className="space-y-2">
               <Label htmlFor="qs-name">Name</Label>
-              <Input id="qs-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required />
+              <Input id="qs-name" value={name} onChange={(e) => { setName(e.target.value); setInfoError(""); }} placeholder="Your name" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="qs-age">Age (optional)</Label>
-              <Input id="qs-age" type="number" min={3} max={100} value={age} onChange={(e) => setAge(e.target.value)} placeholder="Your age" />
+              <Label htmlFor="qs-age">Age</Label>
+              <Input id="qs-age" type="number" inputMode="numeric" min={3} max={100} step={1} value={age} onChange={(e) => { setAge(e.target.value); setInfoError(""); }} placeholder="Your age" required />
             </div>
-            <Button type="submit" className="w-full" disabled={!name.trim()}>Next</Button>
+            {infoError && <p role="alert" className="text-sm text-destructive">{infoError}</p>}
+            <Button type="submit" className="w-full">Next</Button>
           </form>
         )}
 
