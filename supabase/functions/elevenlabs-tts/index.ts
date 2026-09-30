@@ -66,14 +66,17 @@ serve(async (req) => {
       const errText = await response.text();
       console.error("ElevenLabs TTS error:", response.status, errText);
       const quota = errText.includes("quota_exceeded");
+      // Return 200 with a fallback signal so the app can use the browser voice
+      // instead of treating an expected provider limit as a crash.
       return new Response(
         JSON.stringify({
-          error: quota ? "Voice credits used up" : "Voice generation failed",
+          fallback: true,
+          reason: quota ? "quota_exceeded" : "provider_error",
           status: response.status,
           details: errText,
         }),
         {
-          status: quota ? 402 : response.status,
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
