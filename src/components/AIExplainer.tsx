@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import { streamAI, Msg } from "@/lib/ai-stream";
 import { Loader2, RefreshCw } from "lucide-react";
 

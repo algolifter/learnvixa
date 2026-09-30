@@ -35,8 +35,5 @@ export function cleanFakeMath(text: string): string {
     if (c !== undefined) return `$${c}$`;
     return full;
   });
-  // Currency like "$5" (not part of a math span) must not start math mode
-  return out.replace(/(^|[^$\\])\$(?=\d+(?:[.,]\d+)?(?:\s|$|[.,;!?)]))/g, (m, p) => {
-    return m;
-  });
+  return out;
 }
