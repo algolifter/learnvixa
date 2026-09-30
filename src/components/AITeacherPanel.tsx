@@ -100,6 +100,11 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
         throw new Error(`Voice generation failed [${response.status}]: ${details}`);
       }
 
+      if ((response.headers.get("Content-Type") || "").includes("application/json")) {
+        const info = await response.json().catch(() => ({}));
+        throw new Error(`Premium voice unavailable: ${info?.reason ?? "unknown"}`);
+      }
+
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
