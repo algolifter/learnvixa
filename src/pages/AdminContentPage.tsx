@@ -1,3 +1,4 @@
+import { useSafeBack } from "@/hooks/useSafeBack";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -70,6 +71,7 @@ const itemTypeLabel: Record<ItemType, string> = {
 
 export default function AdminContentPage() {
   const navigate = useNavigate();
+  const goBack = useSafeBack("/admin");
   const { user } = useAuth();
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
 
@@ -323,7 +325,7 @@ export default function AdminContentPage() {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-card border border-border hover:bg-muted transition-colors">
+          <button onClick={() => goBack()} className="p-2 rounded-xl bg-card border border-border hover:bg-muted transition-colors">
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <div className="flex-1">

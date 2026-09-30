@@ -1,3 +1,4 @@
+import { useSafeBack } from "@/hooks/useSafeBack";
 import { motion } from "framer-motion";
 import { ArrowLeft, Rocket } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,7 @@ export default function ComingSoon({
   status = "coming_soon",
 }: ComingSoonProps) {
   const navigate = useNavigate();
+  const goBack = useSafeBack("/");
   const tag = statusCopy[status] ?? statusCopy.coming_soon;
 
   return (
@@ -45,7 +47,7 @@ export default function ComingSoon({
           <p className="text-muted-foreground text-sm leading-relaxed">{message}</p>
         </div>
         <button
-          onClick={() => (backTo ? navigate(backTo) : navigate(-1))}
+          onClick={() => (backTo ? navigate(backTo) : goBack())}
           className="mt-6 text-primary hover:underline text-sm flex items-center gap-2 mx-auto"
         >
           <ArrowLeft className="w-4 h-4" /> {backLabel}
