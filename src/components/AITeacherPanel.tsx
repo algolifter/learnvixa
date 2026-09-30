@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Loader2, Volume2, VolumeX, Square } from "lucide-react";
 import { streamAI } from "@/lib/ai-stream";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 
 interface Props {
   subject: string;
@@ -240,7 +243,7 @@ export default function AITeacherPanel({ subject, chapter, section }: Props) {
                 )}
                 {content && (
                   <div className="prose prose-sm dark:prose-invert max-w-none [&_h2]:text-base [&_h2]:font-display [&_h2]:text-foreground [&_h3]:text-sm [&_h3]:font-display">
-                    <ReactMarkdown>{cleanFakeMath(content)}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{cleanFakeMath(content)}</ReactMarkdown>
                   </div>
                 )}
                 {loading && content && (
