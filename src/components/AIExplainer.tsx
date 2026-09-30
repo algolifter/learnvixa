@@ -1,6 +1,8 @@
 import { cleanFakeMath } from "@/lib/cleanFakeMath";
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { streamAI, Msg } from "@/lib/ai-stream";
 import { Loader2, RefreshCw } from "lucide-react";
 
@@ -104,7 +106,7 @@ export default function AIExplainer({ subject, chapter, prompt, cacheKey }: AIEx
           prose-pre:bg-muted prose-pre:rounded-lg prose-pre:p-3
           prose-blockquote:border-primary prose-blockquote:text-muted-foreground
         ">
-          <ReactMarkdown>{cleanFakeMath(content)}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{cleanFakeMath(content)}</ReactMarkdown>
         </div>
       )}
 

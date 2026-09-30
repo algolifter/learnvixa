@@ -17,7 +17,26 @@ function toPlain(inner: string): string | null {
   return words.length > 1 ? `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}` : words[0];
 }
 
+// A $...$ span that is really ordinary prose (several plain words, no math symbols).
+function isProse(inner: string): boolean {
+  if (/[\\^_=<>+*/{}]|\d/.test(inner)) return false;
+  return inner.trim().split(/\s+/).length >= 3;
+}
+
 export function cleanFakeMath(text: string): string {
   if (!text) return text;
-  return text.replace(MATH, (full, a, b, c, d) => toPlain(a ?? b ?? c ?? d ?? "") ?? full);
+  const out = text.replace(MATH, (full, a, b, c, d) => {
+    const inner = a ?? b ?? c ?? d ?? "";
+    const plain = toPlain(inner);
+    if (plain !== null) return plain;
+    if (d !== undefined && isProse(inner)) return inner;
+    // Normalise \( \) and \[ \] to $ / $$ so the math renderer understands them
+    if (b !== undefined) return `$$${b}$$`;
+    if (c !== undefined) return `$${c}$`;
+    return full;
+  });
+  // Currency like "$5" (not part of a math span) must not start math mode
+  return out.replace(/(^|[^$\\])\$(?=\d+(?:[.,]\d+)?(?:\s|$|[.,;!?)]))/g, (m, p) => {
+    return m;
+  });
 }
