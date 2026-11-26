@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Authenticated can read roadmap" ON public.roadmap_items;
